@@ -2,7 +2,7 @@
 """
 
 from utils.options import get_args
-from utils.parser import parse_notebook
+from utils.reader import parse_notebook
 from utils.injector import write_modules
 from utils.cda import analyze_dependencies
 

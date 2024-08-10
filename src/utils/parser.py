@@ -1,91 +1,80 @@
-""" Parsing methods for both notebooks and packages/modules
-"""
+import re
+from copy import copy
 
-import nbformat
-from collections import defaultdict
+# ^\$(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*))?$   cmds parse
+# <!--(?P<comment>(?:(.|\n)*))-->
 
-def __parse_notebook_code_line(line):
-    if line.startswith('!'):
-        # skip iPython magic commands
-        return ''
-    
-    return line
-
-
-def parse_notebook(notebook_path, default_filename='default.py',
-                   root_package='', 
-                   skip_level=['Imports', 'Libraries']):
-    '''
-    Parse the notebook to extract import statements and code cells.
+def parse_notebook_code(source):
+    """
+    Formats and validates a Notebook code cell (i.e., removing 
+    invalid lines - such as iPython magic commands - to prep 
+    for refactoring)
 
     Args:
-    notebook_path (str): Path to the Jupyter notebook.
-    default_filename (str, optional): The default filename if none \
-        is given at the start of a cell (i.e. `filename: foobar.py`).
-    root_package (str, optional): Root package name, '' for the \
-        current dir.
-    skip_level (list, optional): a list of header names to skip from \
-        indexing. This is primarily used to prevent the "import" or \
-        "instructions" headers from being parsed as packages.
-
-    Returns:
-    tuple: A tuple containing a parsed list of import lines and a parsed \
-        dict of code cells (dot-separated keys representing the package \
-        hierarchy).
-    '''
-    with open(notebook_path, 'r') as f:
-        nb = nbformat.read(f, as_version=4)
-
-    imports = []
-    code_cells = defaultdict(list)
-    current_hierarchy = [root_package]
-    filename = default_filename
-
-    for cell in nb.cells:
-        if cell.cell_type == 'code':
-            source = cell.source
-            if source.strip().startswith('# filename:'):
-                filename = source.split(':')[1].strip()
-                continue
-
-            is_ml_comment = False
-            code_content = []           # per file
-
-            for line in source.split('\n'):
-                # parse imports (whilst handling keywords 'from'/'import' in multiline comments)
-                stripped_line = line #.strip()
-                if stripped_line.startswith('"""') or stripped_line.startswith("'''"):
-                    is_ml_comment = not is_ml_comment
-                if not is_ml_comment:
-                    if stripped_line.startswith('import ') or stripped_line.startswith('from '):
-                        imports.append(line)
-                    else:
-                        code_content.append(__parse_notebook_code_line(line))
-                else:
-                    code_content.append(__parse_notebook_code_line(line))
-            code_cells['>'.join(current_hierarchy) + '>' + filename].append('\n'.join(code_content))
-        
-        elif cell.cell_type == 'markdown':
-            # markdown; setting code-cell hierarchical level
-            for line in cell.source.split('\n'):
-                if line.startswith('#'):
-                    level = line.count('#')
-                    header = line.strip('#').strip().replace(' ', '_').lower()
-                    
-                    if header.lower() in [l.lower() for l in skip_level]:
-                        continue
-
-                    if level <= len(current_hierarchy):
-                        current_hierarchy = current_hierarchy[:level-1]
-                    current_hierarchy.append(header)
-
-    return imports, code_cells
-
-
-def parse_modules(source_dir):
-    """
-    Crawl hierarchically through a given source directory
-    parsing and consolidating 
+        source (str): source code (str lines); the ipynb code cell
+    
+    ReturnsL
+        (str): the formatted code cell
     """
 
-    pass
+    def __format_code_line(line):
+        if line.startswith('!'):
+            # skip iPython magic commands
+            return ''
+        return line
+
+    ret_code = []
+    ret_imports = []
+    is_multiline_comment = False
+
+    for line in source.split('\n'):
+        # parse imports (whilst handling keywords 'from'/'import' in multiline comments)
+        stripped_line = line #.strip()
+        if stripped_line.startswith('"""') or stripped_line.startswith("'''"):
+            is_multiline_comment = not is_multiline_comment
+        if not is_multiline_comment:
+            if stripped_line.startswith('import ') or stripped_line.startswith('from '):
+                ret_imports.append(line)
+            else:
+                ret_code.append(__format_code_line(line))
+        else:
+            ret_code.append(__format_code_line(line))
+    
+    return ret_imports, '\n'.join(ret_code)
+
+
+def parse_notebook_markdown(source, current_hierarchy):
+    
+    md_str = copy(source)
+
+    # html multiline comment pattern
+    comment_regex = re.compile(r'<!--(?P<comment>(?:(.|\n)*?))-->')
+
+    comments = []
+    for match in comment_regex.finditer(md_str):
+        comments.append(match.group('comment'))
+
+        # removing the html comments from the MD
+        md_str = md_str.replace(match.group(0), '')
+
+    cmd_regex = re.compile(r'^\$(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*))?$', re.MULTILINE)
+
+    for comment in comments:
+        for line in comment.split('\n'):
+            # strip leading/trailing whitespaces for the cmd=val pattern
+            for cmd_match in cmd_regex.finditer(line.strip()):
+                command = cmd_match.group('command')
+                value = cmd_match.group('value')
+                print(f"Command: {command}, Value: {value}")
+
+    
+    # handle markdown (md_str is stripped of html comments)
+    
+    for line in md_str.split('\n'):
+        if line.startswith('#'):
+            level = line.count('#')
+            header = line.strip('#').strip().replace(' ', '_').lower()
+            
+            if level <= len(current_hierarchy):
+                current_hierarchy = current_hierarchy[:level-1]
+            current_hierarchy.append(header)
