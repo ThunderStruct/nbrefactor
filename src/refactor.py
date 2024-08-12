@@ -1,8 +1,8 @@
 """ Refactors Jupyter Notebooks into Python Packages and vice-versa
 """
 
-from utils.options import get_args
-from utils.reader import parse_notebook
+from utils.options import Options
+from utils.reader import read_notebook
 from utils.injector import write_modules
 from utils.cda import analyze_dependencies
 
@@ -15,7 +15,7 @@ def refactor_notebook(notebook_path, output_path):
     notebook_path (str): Path to the Jupyter notebook.
     output_path (str): Path to the output directory.
     """
-    imports, code_cells = parse_notebook(notebook_path)
+    imports, code_cells = read_notebook(notebook_path)
 
     print('\n'.join([key for key in code_cells.keys()]))
 
@@ -24,6 +24,7 @@ def refactor_notebook(notebook_path, output_path):
 
 
 if __name__ == '__main__':
-    args = get_args()
-    print('args', args)
-    refactor_notebook(args.notebook_path, args.output_path)
+    Options.parse_args()
+    print('args', Options.get_options())
+    refactor_notebook(Options.get('notebook_path'), 
+                      Options.get('output_path'))

@@ -1,26 +1,28 @@
 import re
 from copy import copy
+from .datastructs import MarkdownHeader, Command
+from .datastructs import ParsedCodeCell, ParsedMarkdownCell
 
-# ^\$(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*))?$   cmds parse
-# <!--(?P<comment>(?:(.|\n)*))-->
-
-def parse_notebook_code(source):
+def parse_notebook_code(cell_idx, source):
     """
     Formats and validates a Notebook code cell (i.e., removing 
     invalid lines - such as iPython magic commands - to prep 
     for refactoring)
 
     Args:
+        cell_idx (int): the current cell's index
         source (str): source code (str lines); the ipynb code cell
     
-    ReturnsL
-        (str): the formatted code cell
+    Returns:
+        (ParsedCodeCell): a parsed code cell object, containing the \
+        parsed import statements and formatted code
     """
 
     def __format_code_line(line):
         if line.startswith('!'):
             # skip iPython magic commands
             return ''
+        
         return line
 
     ret_code = []
@@ -40,12 +42,25 @@ def parse_notebook_code(source):
         else:
             ret_code.append(__format_code_line(line))
     
-    return ret_imports, '\n'.join(ret_code)
+    return ParsedCodeCell(source, ret_imports, '\n'.join(ret_code))
 
 
-def parse_notebook_markdown(source, current_hierarchy):
+def parse_notebook_markdown(cell_idx, source):
+    """
+    Formats and validates a Notebook code cell (i.e., removing 
+    invalid lines - such as iPython magic commands - to prep 
+    for refactoring)
+
+    Args:
+        cell_idx (int): the current cell's index
+        source (str): source code (str lines); the ipynb code cell
     
-    md_str = copy(source)
+    Returns:
+        (ParsedMarkdownCell): a parsed markdown cell object containing \
+        the parsed MarkdownHeader and Command objects.
+    """
+
+    md_str = copy(source)   # copied to prevent in-place modification
 
     # html multiline comment pattern
     comment_regex = re.compile(r'<!--(?P<comment>(?:(.|\n)*?))-->')
@@ -57,24 +72,30 @@ def parse_notebook_markdown(source, current_hierarchy):
         # removing the html comments from the MD
         md_str = md_str.replace(match.group(0), '')
 
+    # handle markdown / module hierarchy (md_str is stripped of html comments)
+    md_headers = []
+    for line in md_str.split('\n'):
+        if line.startswith('#'):
+            md_level = line.count('#')
+            md_header = line.strip('#').strip()
+
+            md_headers.append(MarkdownHeader(md_header, md_level))
+    
+    # cmds pattern
     cmd_regex = re.compile(r'^\$(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*))?$', re.MULTILINE)
 
+    commands = []
     for comment in comments:
         for line in comment.split('\n'):
             # strip leading/trailing whitespaces for the cmd=val pattern
             for cmd_match in cmd_regex.finditer(line.strip()):
-                command = cmd_match.group('command')
+                cmd_str = cmd_match.group('command')
                 value = cmd_match.group('value')
-                print(f"Command: {command}, Value: {value}")
+                
+                try:
+                    commands.append(Command(cmd_str, value))
+                except ValueError:
+                    # invalid command, warn and ignore
+                    print(f'An invalid command type `{cmd_str}` in Cell {cell_idx} was found and ignored. (Headers encountered: "{md_header}")')
 
-    
-    # handle markdown (md_str is stripped of html comments)
-    
-    for line in md_str.split('\n'):
-        if line.startswith('#'):
-            level = line.count('#')
-            header = line.strip('#').strip().replace(' ', '_').lower()
-            
-            if level <= len(current_hierarchy):
-                current_hierarchy = current_hierarchy[:level-1]
-            current_hierarchy.append(header)
+    return ParsedMarkdownCell(source, md_headers, commands)
