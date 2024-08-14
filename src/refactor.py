@@ -4,7 +4,6 @@
 from utils.options import Options
 from utils.reader import read_notebook
 from utils.injector import write_modules
-from utils.cda import analyze_dependencies
 
 
 def refactor_notebook(notebook_path, output_path):

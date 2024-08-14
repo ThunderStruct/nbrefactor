@@ -1,7 +1,7 @@
 import re
 from copy import copy
-from .datastructs import MarkdownHeader, Command
-from .datastructs import ParsedCodeCell, ParsedMarkdownCell
+from ..data import MarkdownHeader, Command
+from ..data import ParsedCodeCell, ParsedMarkdownCell
 
 def parse_notebook_code(cell_idx, source):
     """
