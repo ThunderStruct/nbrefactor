@@ -10,26 +10,29 @@ from datastructs import ParsedCodeCell
 
 def write_modules(node, output_path):
     """
-    Recursively writes the modules and their contents to disk.
+    Recursively writes the modules and their contents given a :class:`~ModuleNode` tree hierarchy.
     
     Args:
-        node (ModuleNode): The current node representing a module or package.
-        output_path (str): The path where the Python files should be written.
+        node (ModuleNode): the current node representing a module or package.
+        output_path (str): the path where the Python files should be written.
     """
-    module_path = os.path.join(output_path, *node.get_full_path())
-
-    if not os.path.exists(module_path):
-        os.makedirs(module_path)
-
-    # write all parsed cells to respective module node
-    for parsed_cell in node.parsed_cells:
-        if isinstance(parsed_cell, ParsedCodeCell):
-            with open(os.path.join(module_path, f'cell_{parsed_cell.cell_idx}.py'), 'w') as f:
-                # inject imports + definitions + source
-                for imp in parsed_cell.imports:
-                    f.write(astor.to_source(imp) + '\n')
-                f.write(parsed_cell.source + '\n')
-
-    # recursively module nodes
-    for child in node.children.values():
-        write_modules(child, output_path)
+    
+    if not node.children:
+        # leaf node -> this is a module, write file
+        filename = f'{node.name}.py'
+        file_path = os.path.join(output_path, filename)
+        with open(file_path, 'w') as f:
+            for parsed_cell in node.parsed_cells:
+                if isinstance(parsed_cell, ParsedCodeCell):
+                    # inject imports / dependencies
+                    for imp in parsed_cell.imports:
+                        f.write(astor.to_source(imp) + '\n')
+                    f.write(parsed_cell.source + '\n')
+    else:
+        # node has children -> create dir
+        module_path = os.path.join(output_path, node.name)
+        if not os.path.exists(module_path):
+            os.makedirs(module_path)
+        
+        for child in node.children.values():
+            write_modules(child, module_path)

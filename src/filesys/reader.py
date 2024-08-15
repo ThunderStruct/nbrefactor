@@ -15,7 +15,7 @@ def read_notebook(notebook_path):
     Args:
         notebook_path (str): relative path to the Jupyter notebook.
     Returns:
-        list: A list of UnparsedCell objects containing both the
+        list: a list of UnparsedCell objects containing both the
         code cells and markdown cells.
     """
 

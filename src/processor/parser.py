@@ -9,24 +9,26 @@ from datastructs import ParsedCodeCell, ParsedMarkdownCell
 from .cda import analyze_code_cell
 
 
-def parse_code_cell(cell_idx, source, definitions):
+def parse_code_cell(cell_idx, source, module_node, definitions):
     """
     Parses a code cell into a ParsedCodeCell object.
     
     Args:
-        cell_idx (int): Index of the cell in the notebook.
-        source (str): Source code from the cell.
-        definitions (dict): A dictionary of definitions to track and update.
+        cell_idx (int): index of the cell in the notebook.
+        source (str): the cell's index in the notebook.
+        module_node (:class:`~ModuleNode`): the module node in the built module tree
+        definitions (dict): a dictionary of definitions to track and update.
         
     Returns:
-        ParsedCodeCell: A parsed code cell object with imports, definitions, and usages.
+        ParsedCodeCell: a parsed code cell object with analyzed imports, definitions, usages, etc.
     """
 
     parsed_code = analyze_code_cell(source, definitions)
 
     return ParsedCodeCell(
         cell_idx, 
-        source, 
+        source,
+        module_node=module_node,
         imports=parsed_code['imports'], 
         definitions=parsed_code['definitions'], 
         usages=parsed_code['usages']
@@ -38,8 +40,8 @@ def parse_markdown_cell(cell_idx, source):
     Parses a markdown cell into a ParsedMarkdownCell object.
     
     Args:
-        cell_idx (int): Index of the cell in the notebook.
-        source (str): Markdown content from the cell.
+        cell_idx (int): the cell's index in the notebook.
+        source (str): the cell's markdown content.
         
     Returns:
         ParsedMarkdownCell: A parsed markdown cell object containing headers and commands.

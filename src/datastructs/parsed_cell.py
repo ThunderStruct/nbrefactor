@@ -10,16 +10,19 @@ class ParsedCell:
 
 
 class ParsedCodeCell(ParsedCell):
-    def __init__(self, cell_idx, source, imports=None, definitions=None, usages=None):
+    def __init__(self, cell_idx, source, module_node=None, imports=None, definitions=None, usages=None):
         super(ParsedCodeCell, self).__init__()
         self.cell_idx = cell_idx
         self.source = source
+        self.module_node = module_node
         self.imports = imports if imports is not None else []
         self.definitions = definitions if definitions is not None else []
         self.usages = usages if usages is not None else []
 
     def __str__(self):
-        return f'\n\tParsedCodeCell(\n\t\tCell Idx: {self.cell_idx}\n\t\tSource: {self.source[:50]}\n\t\tImports: {self.imports}\n\t\tDefinitions: {self.definitions}\n\t\tUsages: {self.usages}\n\t)'
+        return (f'\n\tParsedCodeCell(\n\t\tCell Idx: {self.cell_idx}\n\t\tSource: {self.source[:50]}\n\t\t'
+                f'Imports: {self.imports}\n\t\tDefinitions: {self.definitions}\n\t\t'
+                f'Usages: {self.usages}\n\t\tModuleNode: {self.module_node}\n\t)')
 
     def __repr__(self):
         return str(self)
