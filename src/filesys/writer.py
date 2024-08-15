@@ -1,28 +1,35 @@
 """ Writes the analyzed modules / notebook
 """
 
+import sys
+sys.path.append('..')
+
 import os
 import astor
+from datastructs import ParsedCodeCell
 
-def write_modules(dependencies, base_path):
+def write_modules(node, output_path):
     """
-    Writes the extracted modules and injects dependencies respectively
-
+    Recursively writes the modules and their contents to disk.
+    
     Args:
-    dependencies (dict): Dictionary of function dependencies.
-    base_path (str): Base path for the module files.
+        node (ModuleNode): The current node representing a module or package.
+        output_path (str): The path where the Python files should be written.
     """
+    module_path = os.path.join(output_path, *node.get_full_path())
 
-    for module_name, data in dependencies.items():
-        module_path = os.path.join(base_path, 
-                                   module_name.lstrip('>').replace('>', 
-                                                                   os.sep))
-        
-        print(module_path)
-        # create the directory if not exists
-        os.makedirs(os.path.dirname(module_path), exist_ok=True)
+    if not os.path.exists(module_path):
+        os.makedirs(module_path)
 
-        with open(module_path, 'w') as f:
-            for import_node in data['imports']:
-                f.write(astor.to_source(import_node) + '\n')
-            f.write('\n'.join(data['code']))
+    # write all parsed cells to respective module node
+    for parsed_cell in node.parsed_cells:
+        if isinstance(parsed_cell, ParsedCodeCell):
+            with open(os.path.join(module_path, f'cell_{parsed_cell.cell_idx}.py'), 'w') as f:
+                # inject imports + definitions + source
+                for imp in parsed_cell.imports:
+                    f.write(astor.to_source(imp) + '\n')
+                f.write(parsed_cell.source + '\n')
+
+    # recursively module nodes
+    for child in node.children.values():
+        write_modules(child, output_path)

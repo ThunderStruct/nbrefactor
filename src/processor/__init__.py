@@ -1,2 +1,2 @@
 
-from .processor import refactor_notebook
+from .processor import process_notebook
