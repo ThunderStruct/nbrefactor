@@ -12,7 +12,7 @@ def process_notebook(notebook_path, output_path, root_package=''):
     unparsed_cells = read_notebook(notebook_path)
     
     # build module tree
-    root = ModuleNode(root_package, 3)
+    root = ModuleNode(root_package)
     current_node = root
     node_stack = [root]
     

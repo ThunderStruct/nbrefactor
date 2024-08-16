@@ -71,10 +71,16 @@ def analyze_code_cell(source, definitions):
         definitions[node.name] = node
 
     # 5. analyze dependencies
-    usages = UsageVisitor(definitions).visit(parsed_tree)
+    usages = UsageVisitor(definitions)
+    usages.visit(parsed_tree)
+
     
-    return {
+    ret_dict = {
         'imports': imports,
         'definitions': definitions,
-        'usages': usages
+        'usages': usages.used_names
     }
+
+    print(ret_dict, '\n\n')
+
+    return ret_dict
