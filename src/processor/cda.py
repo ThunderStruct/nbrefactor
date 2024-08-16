@@ -122,18 +122,19 @@ def analyze_code_cell(source, current_module_path):
     # 2. parse source
     parsed_tree = ast.parse(clean_source)
 
-    # 3. strip the source of import statements
+    # 3. strip the source of import statements (step 4. updates the definitions accordingly)
     imports = []
-    code_lines = []
-    source_lines = clean_source.splitlines()
+    import_lines = set()
 
     for node in ast.walk(parsed_tree):
         if isinstance(node, (ast.Import, ast.ImportFrom)):
             imports.append(node)
-        elif hasattr(node, 'lineno'):
-            code_lines.append(source_lines[node.lineno - 1])
+            import_lines.add(node.lineno)
 
-    extracted_source = "\n".join(code_lines)
+    extracted_source = '\n'.join(
+        line for i, line in enumerate(clean_source.splitlines(), start=1)
+        if i not in import_lines
+    )
 
     # 4. track definitions and visit the AST
     usage_visitor = UsageVisitor(current_module_path)
@@ -155,15 +156,12 @@ def analyze_code_cell(source, current_module_path):
             if module_path != current_module_path and module_path is not None:
                 rel_path = __relative_import_path(current_module_path, module_path)
                 usage_visitor.add_import(used_name, rel_path)
-            else:
-                # the usage is within the same module, no import needed
-                usage_visitor.add_import(used_name, None)
+            # else:
+            #     # the usage is within the same module, no import needed
+            #     usage_visitor.add_import(used_name, None)
 
-    ret_dict = {
+    return {
         'source': extracted_source,
         'dependencies': usage_visitor.get_dependencies(),
     }
 
-    print(ret_dict, '\n\n')
-
-    return ret_dict
