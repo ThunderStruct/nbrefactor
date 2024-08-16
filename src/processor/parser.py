@@ -9,7 +9,7 @@ from datastructs import ParsedCodeCell, ParsedMarkdownCell
 from .cda import analyze_code_cell
 
 
-def parse_code_cell(cell_idx, source, module_node, definitions):
+def parse_code_cell(cell_idx, source, module_node):
     """
     Parses a code cell into a ParsedCodeCell object.
     
@@ -17,21 +17,19 @@ def parse_code_cell(cell_idx, source, module_node, definitions):
         cell_idx (int): index of the cell in the notebook.
         source (str): the cell's index in the notebook.
         module_node (:class:`~ModuleNode`): the module node in the built module tree
-        definitions (dict): a dictionary of definitions to track and update.
         
     Returns:
         ParsedCodeCell: a parsed code cell object with analyzed imports, definitions, usages, etc.
     """
 
-    parsed_code = analyze_code_cell(source, definitions)
+    parsed_code = analyze_code_cell(source, module_node.get_full_path())
 
     return ParsedCodeCell(
-        cell_idx, 
-        source,
-        module_node=module_node,
-        imports=parsed_code['imports'], 
-        definitions=parsed_code['definitions'], 
-        usages=parsed_code['usages']
+        cell_idx=cell_idx,
+        raw_source=source,
+        parsed_source=parsed_code['source'], 
+        dependencies=parsed_code['dependencies'],
+        module_node=module_node
     )
 
 

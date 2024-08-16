@@ -25,9 +25,9 @@ def write_modules(node, output_path):
             for parsed_cell in node.parsed_cells:
                 if isinstance(parsed_cell, ParsedCodeCell):
                     # inject imports / dependencies
-                    for imp in parsed_cell.imports:
-                        f.write(astor.to_source(imp))
-                    f.write(parsed_cell.source + '\n')
+                    for dependency in parsed_cell.dependencies:
+                        f.write(dependency + '\n')
+                    f.write('\n' + parsed_cell.parsed_source)
     else:
         # node has children -> create dir
         module_path = os.path.join(output_path, node.name)

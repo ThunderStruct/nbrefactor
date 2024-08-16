@@ -21,16 +21,62 @@ import ast
 #         return node
     
 class UsageVisitor(ast.NodeVisitor):
-    def __init__(self, definitions):
+    __definitions_tracker = {}  # all encountered definitions (handles identifier shadowing as well!)
+
+    def __init__(self, local_module_path):
         self.used_names = set()
-        self.definitions = definitions
+        self.local_module_path = local_module_path
+        self.required_imports = {}
 
     def visit_Name(self, node):
-        if node.id in self.definitions:
+        if node.id in UsageVisitor.__definitions_tracker:
             self.used_names.add(node.id)
         self.generic_visit(node)
 
+    def visit_FunctionDef(self, node):
+        UsageVisitor.__definitions_tracker[node.name] = {
+            'node': node,
+            'module_path': self.local_module_path
+        }
+        self.generic_visit(node)
 
+    def visit_ClassDef(self, node):
+        UsageVisitor.__definitions_tracker[node.name] = {
+            'node': node,
+            'module_path': self.local_module_path
+        }
+        self.generic_visit(node)
+
+    def handle_import(self, import_node):
+        if isinstance(import_node, ast.Import):
+            for alias in import_node.names:
+                UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
+                    'node': import_node,
+                    'module_path': None  # set None as it's not a local definition
+                }
+        elif isinstance(import_node, ast.ImportFrom):
+            module = import_node.module or ''
+            for alias in import_node.names:
+                full_name = f"{module}.{alias.name}" if module else alias.name
+                UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
+                    'node': import_node,
+                    'module_path': None  # set None as it's not a local definition
+                }
+        
+    def add_import(self, name, module):
+        self.required_imports[name] = module
+
+    def get_usages(self):
+        return self.used_names
+
+    def get_dependencies(self):
+        return [f"from {module} import {name}" if module else f"import {name}" 
+                for name, module in self.required_imports.items()]
+
+    @classmethod
+    def get_definitions(cls):
+        return cls.__definitions_tracker
+    
 
 def __remove_ipy_statements(source):
     """
@@ -53,7 +99,21 @@ def __remove_ipy_statements(source):
     return cleaned_source
 
 
-def analyze_code_cell(source, definitions):
+def __relative_import_path(current_module, target_module):
+    common_prefix_length = 0
+    for i in range(min(len(current_module), len(target_module))):
+        if current_module[i] == target_module[i]:
+            common_prefix_length += 1
+        else:
+            break
+
+    up_levels = len(current_module) - common_prefix_length
+    down_path = target_module[common_prefix_length:]
+
+    return '.' * up_levels + '.'.join(down_path)
+
+
+def analyze_code_cell(source, current_module_path):
 
     # 1. clean the source (remove IPython magic statements)
     # (possibly in the future we can parse + run them in a sub-process (i.e. pip installs, etc.))
@@ -62,23 +122,46 @@ def analyze_code_cell(source, definitions):
     # 2. parse source
     parsed_tree = ast.parse(clean_source)
 
-    # 3. extract import statements to be injected respectively later
-    imports = [node for node in ast.walk(parsed_tree) if isinstance(node, (ast.Import, ast.ImportFrom))]
+    # 3. strip the source of import statements
+    imports = []
+    code_lines = []
+    source_lines = clean_source.splitlines()
 
-    # 4. track declared definitions (add newly encountered defs and overwrite/shadow existing definitions)
-    new_defs = [node for node in ast.walk(parsed_tree) if isinstance(node, (ast.FunctionDef, ast.ClassDef))]
-    for node in new_defs:
-        definitions[node.name] = node
+    for node in ast.walk(parsed_tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            imports.append(node)
+        elif hasattr(node, 'lineno'):
+            code_lines.append(source_lines[node.lineno - 1])
 
-    # 5. analyze dependencies
-    usages = UsageVisitor(definitions)
-    usages.visit(parsed_tree)
+    extracted_source = "\n".join(code_lines)
+
+    # 4. track definitions and visit the AST
+    usage_visitor = UsageVisitor(current_module_path)
+
+    for import_node in imports:
+        usage_visitor.handle_import(import_node)
+
+    usage_visitor.visit(parsed_tree)
 
     
+    # 5. analyze dependencies based on parsed AST usages
+    for used_name in usage_visitor.get_usages():
+        defs = UsageVisitor.get_definitions()
+        if used_name in defs:
+            definition_info = defs[used_name]
+            module_path = definition_info['module_path']
+
+            # relative import path
+            if module_path != current_module_path and module_path is not None:
+                rel_path = __relative_import_path(current_module_path, module_path)
+                usage_visitor.add_import(used_name, rel_path)
+            else:
+                # the usage is within the same module, no import needed
+                usage_visitor.add_import(used_name, None)
+
     ret_dict = {
-        'imports': imports,
-        'definitions': definitions,
-        'usages': usages.used_names
+        'source': extracted_source,
+        'dependencies': usage_visitor.get_dependencies(),
     }
 
     print(ret_dict, '\n\n')

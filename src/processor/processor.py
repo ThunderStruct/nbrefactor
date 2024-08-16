@@ -15,9 +15,6 @@ def process_notebook(notebook_path, output_path, root_package=''):
     root = ModuleNode(root_package)
     current_node = root
     node_stack = [root]
-    
-    # track declared definitions
-    global_definitions = {}
 
     # parse all cells
     for cell in unparsed_cells:
@@ -43,7 +40,7 @@ def process_notebook(notebook_path, output_path, root_package=''):
             current_node.add_parsed_cell(parsed_md)
 
         elif cell.cell_type == 'code':
-            parsed_code = parse_code_cell(cell.cell_idx, cell.raw_source, current_node, global_definitions)
+            parsed_code = parse_code_cell(cell.cell_idx, cell.raw_source, current_node)
             current_node.add_parsed_cell(parsed_code)
 
     # write the parsed module tree
