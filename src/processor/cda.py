@@ -143,7 +143,6 @@ def analyze_code_cell(source, current_module_path):
         usage_visitor.handle_import(import_node)
 
     usage_visitor.visit(parsed_tree)
-
     
     # 5. analyze dependencies based on parsed AST usages
     for used_name in usage_visitor.get_usages():

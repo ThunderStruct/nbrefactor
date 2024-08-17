@@ -34,5 +34,20 @@ def write_modules(node, output_path):
         if not os.path.exists(module_path):
             os.makedirs(module_path)
         
+        # node could potentially have code at package-level, so...
+        if node.has_code_cells():
+            print(node.name, module_path, node)
+            filename = f'{node.name}.py'
+            file_path = os.path.join(module_path, filename)
+            with open(file_path, 'w') as f:
+                for parsed_cell in node.parsed_cells:
+                    if isinstance(parsed_cell, ParsedCodeCell):
+                        # inject imports / dependencies
+                        for dependency in parsed_cell.dependencies:
+                            f.write(dependency + '\n')
+                        f.write('\n' + parsed_cell.parsed_source)
+
+        # recursively write child nodes
         for child in node.children.values():
             write_modules(child, module_path)
+        
