@@ -19,35 +19,82 @@ import ast
 #                 return None
             
 #         return node
-    
+
 class UsageVisitor(ast.NodeVisitor):
-    __definitions_tracker = {}  # all encountered definitions (handles identifier shadowing as well!)
+    __definitions_tracker = {}  # all encountered definitions
 
     def __init__(self, local_module_path):
         self.local_module_path = local_module_path
-        self.used_names = set()
-        self.required_imports = {}
+        self.used_names = set()         # usage tracker
+        self.required_imports = {}      # dependencies
+        self.local_scope = []           # for scope-awareness (this is used to detect definition shadowing)
 
-    def visit_Name(self, node):
-        if isinstance(node, ast.ClassDef) or isinstance(node, ast.FunctionDef):
-            if node.id in UsageVisitor.__definitions_tracker:
-                self.used_names.add(node.id)
-        self.generic_visit(node)
 
-    def visit_FunctionDef(self, node):
+    def visit_FunctionDef(self, node):       
+         # open scope
+        self.local_scope.append(set())
+        
+        # add the function to the global definitions tracker
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
             'module_path': self.local_module_path,
             'is_local': True
         }
+
+        # add args to the "ignore tracking" list
+        for arg in node.args.args:
+            self.local_scope[-1].add(arg.arg)
+        
+        # python 3.8+ edge case for positional-only args
+        if hasattr(node.args, 'posonlyargs'):
+            for arg in node.args.posonlyargs:
+                self.local_scope[-1].add(arg.arg)
+
+        for arg in node.args.kwonlyargs:
+            self.local_scope[-1].add(arg.arg)
+        
+        if node.args.vararg:
+            self.local_scope[-1].add(node.args.vararg.arg)
+        if node.args.kwarg:
+            self.local_scope[-1].add(node.args.kwarg.arg)
+
         self.generic_visit(node)
+
+        # close scope
+        self.local_scope.pop()
+
 
     def visit_ClassDef(self, node):
+        # open scope
+        self.local_scope.append(set())
+        
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
             'module_path': self.local_module_path,
             'is_local': True
         }
+        self.generic_visit(node)
+
+        # local scope
+        self.local_scope.pop()
+
+    def visit_Name(self, node):
+        
+        if any(node.id in scope for scope in self.local_scope):
+            # local variable, ignore
+            pass
+        elif node.id in UsageVisitor.__definitions_tracker:
+            # a new global definition
+            self.used_names.add(node.id)
+        self.generic_visit(node)
+
+
+    def visit_Assign(self, node):
+        # handle assignment statements (edge case where they are treated as global defs)
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                if self.local_scope:
+                    self.local_scope[-1].add(target.id)
         self.generic_visit(node)
 
     def handle_import(self, import_node):
@@ -66,7 +113,7 @@ class UsageVisitor(ast.NodeVisitor):
                     'module_path': module,
                     'is_local': False
                 }
-        
+
     def add_import(self, name, module):
         self.required_imports[name] = module
 
@@ -74,13 +121,14 @@ class UsageVisitor(ast.NodeVisitor):
         return self.used_names
 
     def get_dependencies(self):
-        return [f"from {module} import {name}" if module else f"import {name}" 
+        return [f'from {module} import {name}' if module else f'import {name}' 
                 for name, module in self.required_imports.items()]
 
     @classmethod
     def get_definitions(cls):
         return cls.__definitions_tracker
-    
+
+
 
 def __remove_ipy_statements(source):
     """
