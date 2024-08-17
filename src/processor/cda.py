@@ -38,7 +38,8 @@ class UsageVisitor(ast.NodeVisitor):
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
             'module_path': self.local_module_path,
-            'is_local': True
+            'is_local': True,
+            'alias': None
         }
 
         # add args to the "ignore tracking" list
@@ -71,7 +72,8 @@ class UsageVisitor(ast.NodeVisitor):
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
             'module_path': self.local_module_path,
-            'is_local': True
+            'is_local': True,
+            'alias': None
         }
         self.generic_visit(node)
 
@@ -100,29 +102,54 @@ class UsageVisitor(ast.NodeVisitor):
     def handle_import(self, import_node):
         if isinstance(import_node, ast.Import):
             for alias in import_node.names:
-                UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
+                defined_name = alias.asname or alias.name
+                UsageVisitor.__definitions_tracker[defined_name] = {
                     'node': import_node,
-                    'module_path': None,
-                    'is_local': False
+                    'module_path': alias.name,
+                    'is_local': False,
+                    'alias': alias.asname
                 }
+
         elif isinstance(import_node, ast.ImportFrom):
             module = import_node.module or ''
             for alias in import_node.names:
-                UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
+                defined_name = alias.asname or alias.name
+                full_name = f"{module}.{alias.name}" if module else alias.name
+                UsageVisitor.__definitions_tracker[defined_name] = {
                     'node': import_node,
-                    'module_path': module,
-                    'is_local': False
+                    'module_path': full_name,
+                    'is_local': False,
+                    'alias': alias.asname
                 }
 
-    def add_import(self, name, module):
-        self.required_imports[name] = module
+    def add_import(self, name, module, alias):
+        self.required_imports[name] = (module, alias)
 
     def get_usages(self):
         return self.used_names
 
     def get_dependencies(self):
-        return [f'from {module} import {name}' if module else f'import {name}' 
-                for name, module in self.required_imports.items()]
+        # generate import statements to later inject dependencies
+        dependencies = []
+        package_level_module = self.local_module_path[-2] if len(self.local_module_path) > 1 else ''
+        for name, (module, alias) in self.required_imports.items():
+            # Debugging
+            # print(f'\n----{self.local_module_path} > {name}: {module}----\n')
+
+            asname = ' as {alias}' if alias is not None else ''
+
+            if module == '.':
+                # package-level module (relative import)
+                base_module = f'.{package_level_module}'
+                dependencies.append(f'from {base_module} import {name}{asname}')
+            elif '.' in module: # from-import
+                base_module, imported_name = module.rsplit('.', 1)
+                dependencies.append(f'from {base_module} import {imported_name}{asname}')
+            
+            elif name == module: # regular import
+                dependencies.append(f'import {module}{asname}')
+
+        return dependencies
 
     @classmethod
     def get_definitions(cls):
@@ -147,6 +174,8 @@ def __remove_ipy_statements(source):
 
     # remove lines that start with % or ! with regex rather than ast transformer
     magic_regex = re.compile(r'^\s*(%|\!).*$', re.MULTILINE)
+
+    # add a comment to indicate the removal (felt wrong not to...)
     cleaned_source = magic_regex.sub('# Removed IPython magic command', source)
     return cleaned_source
 
@@ -206,11 +235,11 @@ def analyze_code_cell(source, current_module_path):
             if definition_info['is_local'] and module_path != current_module_path:
                 # relative import
                 rel_path = __relative_import_path(current_module_path, module_path)
-                usage_visitor.add_import(used_name, rel_path)
+                usage_visitor.add_import(used_name, rel_path, definition_info['alias'])
 
             elif module_path != current_module_path:
                 # regular lib import
-                usage_visitor.add_import(used_name, module_path)
+                usage_visitor.add_import(used_name, module_path, definition_info['alias'])
 
             # else:
             #     # the usage is within the same module, no import needed
