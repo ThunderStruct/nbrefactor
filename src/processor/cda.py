@@ -24,8 +24,8 @@ class UsageVisitor(ast.NodeVisitor):
     __definitions_tracker = {}  # all encountered definitions (handles identifier shadowing as well!)
 
     def __init__(self, local_module_path):
-        self.used_names = set()
         self.local_module_path = local_module_path
+        self.used_names = set()
         self.required_imports = {}
 
     def visit_Name(self, node):
@@ -57,10 +57,10 @@ class UsageVisitor(ast.NodeVisitor):
         elif isinstance(import_node, ast.ImportFrom):
             module = import_node.module or ''
             for alias in import_node.names:
-                full_name = f"{module}.{alias.name}" if module else alias.name
+                resolved_module = f"{module}.{alias.name}" if module else alias.name
                 UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
                     'node': import_node,
-                    'module_path': None  # set None as it's not a local definition
+                    'module_path': resolved_module
                 }
         
     def add_import(self, name, module):
@@ -155,10 +155,14 @@ def analyze_code_cell(source, current_module_path):
             if module_path != current_module_path and module_path is not None:
                 rel_path = __relative_import_path(current_module_path, module_path)
                 usage_visitor.add_import(used_name, rel_path)
+
+            elif module_path != current_module_path:
+                usage_visitor.add_import(used_name, None)
             # else:
             #     # the usage is within the same module, no import needed
-            #     usage_visitor.add_import(used_name, None)
+            
 
+    print(f'Used names for {".".join(current_module_path)}={usage_visitor.get_usages()}, dependencies={usage_visitor.get_dependencies()}\n')
     return {
         'source': extracted_source,
         'dependencies': usage_visitor.get_dependencies(),

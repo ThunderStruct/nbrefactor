@@ -2,8 +2,7 @@
 """
 
 from utils.options import Options
-from utils.reader import read_notebook
-from utils.injector import write_modules
+from processor import process_notebook
 
 
 def refactor_notebook(notebook_path, output_path):
@@ -14,12 +13,8 @@ def refactor_notebook(notebook_path, output_path):
     notebook_path (str): Path to the Jupyter notebook.
     output_path (str): Path to the output directory.
     """
-    imports, code_cells = read_notebook(notebook_path)
-
-    print('\n'.join([key for key in code_cells.keys()]))
-
-    dependencies = analyze_dependencies(code_cells, imports)
-    write_modules(dependencies, output_path)
+    
+    root_node = process_notebook('./src/notebook.ipynb', './refactored/')
 
 
 if __name__ == '__main__':

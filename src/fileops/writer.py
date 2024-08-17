@@ -5,7 +5,7 @@ import sys
 sys.path.append('..')
 
 import os
-import astor
+from .utils import ensure_dir
 from datastructs import ParsedCodeCell
 
 def write_modules(node, output_path):
@@ -31,12 +31,10 @@ def write_modules(node, output_path):
     else:
         # node has children -> create dir
         module_path = os.path.join(output_path, node.name)
-        if not os.path.exists(module_path):
-            os.makedirs(module_path)
+        ensure_dir(module_path)
         
         # node could potentially have code at package-level, so...
         if node.has_code_cells():
-            print(node.name, module_path, node)
             filename = f'{node.name}.py'
             file_path = os.path.join(module_path, filename)
             with open(file_path, 'w') as f:
