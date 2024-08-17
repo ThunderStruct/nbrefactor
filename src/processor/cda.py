@@ -29,21 +29,24 @@ class UsageVisitor(ast.NodeVisitor):
         self.required_imports = {}
 
     def visit_Name(self, node):
-        if node.id in UsageVisitor.__definitions_tracker:
-            self.used_names.add(node.id)
+        if isinstance(node, ast.ClassDef) or isinstance(node, ast.FunctionDef):
+            if node.id in UsageVisitor.__definitions_tracker:
+                self.used_names.add(node.id)
         self.generic_visit(node)
 
     def visit_FunctionDef(self, node):
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
-            'module_path': self.local_module_path
+            'module_path': self.local_module_path,
+            'is_local': True
         }
         self.generic_visit(node)
 
     def visit_ClassDef(self, node):
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
-            'module_path': self.local_module_path
+            'module_path': self.local_module_path,
+            'is_local': True
         }
         self.generic_visit(node)
 
@@ -52,15 +55,16 @@ class UsageVisitor(ast.NodeVisitor):
             for alias in import_node.names:
                 UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
                     'node': import_node,
-                    'module_path': None  # set None as it's not a local definition
+                    'module_path': None,
+                    'is_local': False
                 }
         elif isinstance(import_node, ast.ImportFrom):
             module = import_node.module or ''
             for alias in import_node.names:
-                resolved_module = f"{module}.{alias.name}" if module else alias.name
                 UsageVisitor.__definitions_tracker[alias.asname or alias.name] = {
                     'node': import_node,
-                    'module_path': resolved_module
+                    'module_path': module,
+                    'is_local': False
                 }
         
     def add_import(self, name, module):
@@ -149,15 +153,17 @@ def analyze_code_cell(source, current_module_path):
         defs = UsageVisitor.get_definitions()
         if used_name in defs:
             definition_info = defs[used_name]
-            module_path = definition_info['module_path']
+            module_path = definition_info['module_path'] or None
 
-            # relative import path
-            if module_path != current_module_path and module_path is not None:
+            if definition_info['is_local'] and module_path != current_module_path:
+                # relative import
                 rel_path = __relative_import_path(current_module_path, module_path)
                 usage_visitor.add_import(used_name, rel_path)
 
             elif module_path != current_module_path:
-                usage_visitor.add_import(used_name, None)
+                # regular lib import
+                usage_visitor.add_import(used_name, module_path)
+
             # else:
             #     # the usage is within the same module, no import needed
             
