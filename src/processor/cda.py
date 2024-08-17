@@ -136,7 +136,7 @@ class UsageVisitor(ast.NodeVisitor):
             # Debugging
             # print(f'\n----{self.local_module_path} > {name}: {module}----\n')
 
-            asname = ' as {alias}' if alias is not None else ''
+            asname = f' as {alias}' if alias is not None else ''
 
             if module == '.':
                 # package-level module (relative import)
@@ -146,7 +146,7 @@ class UsageVisitor(ast.NodeVisitor):
                 base_module, imported_name = module.rsplit('.', 1)
                 dependencies.append(f'from {base_module} import {imported_name}{asname}')
             
-            elif name == module: # regular import
+            else: # regular import
                 dependencies.append(f'import {module}{asname}')
 
         return dependencies
@@ -231,6 +231,8 @@ def analyze_code_cell(source, current_module_path):
         if used_name in defs:
             definition_info = defs[used_name]
             module_path = definition_info['module_path'] or None
+            if used_name == 'np':
+                print(used_name, module_path, definition_info, current_module_path)
 
             if definition_info['is_local'] and module_path != current_module_path:
                 # relative import
