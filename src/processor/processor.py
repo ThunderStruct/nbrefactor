@@ -9,7 +9,7 @@ from datastructs import ModuleNode
 from fileops import read_notebook, write_modules
 from .parser import parse_code_cell, parse_markdown_cell
 
-def process_notebook(notebook_path, output_path, root_package=''):
+def process_notebook(notebook_path, output_path, root_package='.'):
 
     # read notebook
     unparsed_cells = read_notebook(notebook_path)
@@ -24,7 +24,7 @@ def process_notebook(notebook_path, output_path, root_package=''):
         if cell.cell_type == 'markdown':
             parsed_md = parse_markdown_cell(cell.cell_idx, cell.raw_source)
             for header in parsed_md.headers:
-                header_name = header.name.replace(' ', '_').replace('-', '_').lower()
+                header_name = header.name.replace('.', '').replace(' ', '_').replace('-', '_').lower()
 
                 while len(node_stack) > header.level:
                     node_stack.pop()
@@ -46,6 +46,16 @@ def process_notebook(notebook_path, output_path, root_package=''):
             parsed_code = parse_code_cell(cell.cell_idx, cell.raw_source, current_node)
             current_node.add_parsed_cell(parsed_code)
 
+    from .cda import UsageVisitor
+    def pretty(d, indent=0):
+        for key, value in d.items():
+            print('\t' * indent + str(key))
+            if isinstance(value, dict):
+                pretty(value, indent+1)
+            else:
+                print('\t' * (indent+1) + str(value))
+    pretty(UsageVisitor.get_definitions(), 1)
+    
     # write the parsed module tree
     write_modules(root, output_path)
 

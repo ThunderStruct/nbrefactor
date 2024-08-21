@@ -21,6 +21,9 @@ import ast
 #         return node
 
 class UsageVisitor(ast.NodeVisitor):
+    """
+    An AST visitor class to handle the visited definitions, usages, and dependencies.
+    """
     __definitions_tracker = {}  # all encountered definitions
 
     def __init__(self, local_module_path):
@@ -30,17 +33,20 @@ class UsageVisitor(ast.NodeVisitor):
         self.local_scope = []           # for scope-awareness (this is used to detect definition shadowing)
 
 
-    def visit_FunctionDef(self, node):       
-         # open scope
-        self.local_scope.append(set())
+    def visit_FunctionDef(self, node):
         
-        # add the function to the global definitions tracker
-        UsageVisitor.__definitions_tracker[node.name] = {
-            'node': node,
-            'module_path': self.local_module_path,
-            'is_local': True,
-            'alias': None
-        }
+        if len(self.local_scope) == 0:
+            # add the function to the global definitions tracker
+            # ONLY if it is declared in the global scope
+            UsageVisitor.__definitions_tracker[node.name] = {
+                'node': node,
+                'module_path': self.local_module_path,
+                'is_local': True,
+                'alias': None
+            }
+
+        # open scope for func (that way nested definitions won't be added)
+        self.local_scope.append(set())
 
         # add args to the "ignore tracking" list
         for arg in node.args.args:
@@ -61,7 +67,7 @@ class UsageVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-        # close scope
+        # close func scope
         self.local_scope.pop()
 
 
@@ -86,7 +92,8 @@ class UsageVisitor(ast.NodeVisitor):
             # local variable, ignore
             pass
         elif node.id in UsageVisitor.__definitions_tracker:
-            # a new global definition
+            # a new usage in the given parse tree that also exists in the global defs 
+            # (must be imported)
             self.used_names.add(node.id)
         self.generic_visit(node)
 
@@ -114,7 +121,7 @@ class UsageVisitor(ast.NodeVisitor):
             module = import_node.module or ''
             for alias in import_node.names:
                 defined_name = alias.asname or alias.name
-                full_name = f"{module}.{alias.name}" if module else alias.name
+                full_name = f"{module}" if module else alias.name
                 UsageVisitor.__definitions_tracker[defined_name] = {
                     'node': import_node,
                     'module_path': full_name,
@@ -129,23 +136,20 @@ class UsageVisitor(ast.NodeVisitor):
         return self.used_names
 
     def get_dependencies(self):
-        # generate import statements to later inject dependencies
+        # generate import statements to inject the dependencies in the file-writing phase
         dependencies = []
-        package_level_module = self.local_module_path[-2] if len(self.local_module_path) > 1 else ''
+        package_level_module = f'.{self.local_module_path[-2]}' if len(self.local_module_path) > 1 else ''
         for name, (module, alias) in self.required_imports.items():
             # Debugging
-            # print(f'\n----{self.local_module_path} > {name}: {module}----\n')
+            print(f'\n----{self.local_module_path} > {name}: {module}, {alias}----\n')
 
             asname = f' as {alias}' if alias is not None else ''
 
-            if module == '.':
-                # package-level module (relative import)
-                base_module = f'.{package_level_module}'
+            if '.' in module: # from-import
+                # check for package-level relative module
+                base_module = package_level_module if module == '.' else module
                 dependencies.append(f'from {base_module} import {name}{asname}')
-            elif '.' in module: # from-import
-                base_module, imported_name = module.rsplit('.', 1)
-                dependencies.append(f'from {base_module} import {imported_name}{asname}')
-            
+
             else: # regular import
                 dependencies.append(f'import {module}{asname}')
 
@@ -160,6 +164,11 @@ class UsageVisitor(ast.NodeVisitor):
 def __remove_ipy_statements(source):
     """
     Clean the sourec of IPython magic commands.
+
+    TODO: consider replacing the magic commands' lines 
+    with a `subprocess.run()` command? I believe the `!` commands 
+    would simply be `subprocess.run(command_str.split(' ')` or so, 
+    and the `%` commands would be ommitted)
     
     Args:
         source (str): The original source code.
@@ -167,37 +176,84 @@ def __remove_ipy_statements(source):
     Returns:
         str: The cleaned source code with magic commands removed.
     """
-
+    # # This was a dumb approach, ignore
     # magic_pruned = MagicRemover().visit(parsed_tree)
     # return magic_pruned
-
 
     # remove lines that start with % or ! with regex rather than ast transformer
     magic_regex = re.compile(r'^\s*(%|\!).*$', re.MULTILINE)
 
-    # add a comment to indicate the removal (felt wrong not to...)
-    cleaned_source = magic_regex.sub('# Removed IPython magic command', source)
+    # simply comment the statement out rather than remove it (felt wrong to just remove it)
+    cleaned_source = magic_regex.sub(lambda match: f'# {match.group(0)}', source)
     return cleaned_source
 
 
 def __relative_import_path(current_module, target_module):
-    common_prefix_length = 0
+    """
+    Builds up the relative import statement given the current and target module paths.
+    """
+
+    prefix_len = 0
     for i in range(min(len(current_module), len(target_module))):
         if current_module[i] == target_module[i]:
-            common_prefix_length += 1
+            prefix_len += 1
         else:
             break
 
-    up_levels = len(current_module) - common_prefix_length
-    down_path = target_module[common_prefix_length:]
+    up_levels = len(current_module) - prefix_len
+    down_path = target_module[prefix_len:]
 
-    return '.' * up_levels + '.'.join(down_path)
+    if up_levels > 0:
+        return '.' * up_levels + '.'.join(down_path)
+    else:
+        return '.'.join(down_path)
 
 
 def analyze_code_cell(source, current_module_path):
+    """
+    Analyzes dependencies and track declared definitions from a given code block.
+
+    There are a few challenges with this, mainly: 
+    - Tracking declarations globally to handle identifier shadowing 
+      (and exclude non-exportable identifiers, such as function arguments)
+    - Implementing scope-awareness (this is obviously pretty simple and yet headache-inducing; 
+      we just add an empty set `{}` for each encountered scope and push in the respective declarations)
+    - Handling relative import statements sequentially as we encounter new modules/code blocks
+      (e.g. `class A` declared in a generated `./root/package_a/class_a.py` could be imported in 
+      a relative `package_b`)
+    - Taking into considedration import aliases (`import pandas as pd`, etc.) 
+
+    An existential crisis later (dear god I hope someone gets some use out of this tool), 
+    I split the code dependency analysis process into 5 steps:
+
+    1- We remove ast-incompatible statements from the given code source 
+       (primarily IPython magic statements)
+    2- Parse the source using ast (this potentially raises an exception, 
+       we wrap this function in a try-except on the parser-level, 
+       and simply warn + dump the unparseable code into the respective file)
+    3- Strip all import statements from the source as we will later inject the ones we need 
+       for this particular module
+    4- Track the import statements' declared definitions globally, (this will shadow existing 
+       identifiers with the same name -> as it should). This handles both `import $` 
+       and `from $ import $`, supporting `as` aliases)
+    5- Grab the visited usages and collate the required dependencies from the global definitions,
+       handling relative imports and 3rd party libraries respectively.
+
+
+    Args:
+        source (str): the raw source code
+        current_module_path (list): a list of the current source code's target path components,
+        this is used to assign the definitions declared in the source code to a path 
+        (so it can later relatively imported when needed)
+
+    Returns:
+        dict: a dict containing the parsed source code (key='source') and a list of 
+        dependencies/formatted import statements (key='dependencies').
+    """
 
     # 1. clean the source (remove IPython magic statements)
-    # (possibly in the future we can parse + run them in a sub-process (i.e. pip installs, etc.))
+    # (possibly in the future we can parse + run them in a sub-process 
+    # (i.e. pip installs, etc.))
     clean_source = __remove_ipy_statements(source)
 
     # 2. parse source
@@ -231,8 +287,6 @@ def analyze_code_cell(source, current_module_path):
         if used_name in defs:
             definition_info = defs[used_name]
             module_path = definition_info['module_path'] or None
-            if used_name == 'np':
-                print(used_name, module_path, definition_info, current_module_path)
 
             if definition_info['is_local'] and module_path != current_module_path:
                 # relative import
@@ -248,6 +302,7 @@ def analyze_code_cell(source, current_module_path):
             
 
     print(f'Used names for {".".join(current_module_path)}={usage_visitor.get_usages()}, dependencies={usage_visitor.get_dependencies()}\n')
+
     return {
         'source': extracted_source,
         'dependencies': usage_visitor.get_dependencies(),

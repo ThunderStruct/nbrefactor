@@ -5,10 +5,13 @@ from ..fileops import ensure_dir
 def visualize_module_tree(root_node, output_path='./module_tree.pdf'):
     """
     Visualize the :class:`~ModuleNode` tree structure and save it as a PDF.
+
+    Primarily used for debugging and ensuring the generated structure is 
+    as intended.
     
     Args:
-        root_node (:class:`~ModuleNode`): The root node of the tree to visualize.
-        output_path (str): The file path where the PDF should be saved.
+        root_node (:class:`~ModuleNode`): the root node of the tree to visualize.
+        output_path (str): the file path where the PDF should be saved.
     """
 
     def add_nodes_edges(graph, node, parent_name=None):
@@ -20,7 +23,7 @@ def visualize_module_tree(root_node, output_path='./module_tree.pdf'):
             # create an edge from the parent to this node
             graph.edge(parent_name, node_name)
 
-        # recursive calls to all children nodes
+        # recursive calls to all child `~ModuleNode` nodes
         for child in node.children.values():
             add_nodes_edges(graph, child, node_name)
 

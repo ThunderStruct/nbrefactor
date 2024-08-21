@@ -22,6 +22,9 @@ class ModuleNode:
     
     def has_code_cells(self):
         return any([True for cell in self.parsed_cells if isinstance(cell, ParsedCodeCell)])
+    
+    def has_children(self):
+        return len(self.children) > 0
 
     def __str__(self):
         return f'ModuleNode(name={self.name}, parent={self.parent.name}, children={list(self.children.keys())}, parsed cells={self.parsed_cells})'

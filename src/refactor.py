@@ -1,4 +1,4 @@
-""" Refactors Jupyter Notebooks into Python Packages and vice-versa
+""" Refactors Jupyter Notebooks into Python Packages
 """
 
 from utils.options import Options
@@ -13,7 +13,7 @@ def refactor_notebook(notebook_path, output_path):
     notebook_path (str): Path to the Jupyter notebook.
     output_path (str): Path to the output directory.
     """
-    
+
     root_node = process_notebook('./src/notebook.ipynb', './refactored/')
 
 
