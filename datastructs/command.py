@@ -2,10 +2,11 @@ from enum import Enum, auto
 
 class CommandType(Enum):
 
-    IGNORE_CELL         = 'ignore-cell'
+    IGNORE_PACKAGE      = 'ignore-package'
     IGNORE_MODULE       = 'ignore-module'
+    IGNORE_CELL         = 'ignore-cell'
 
-    DECLARE_FILE        = 'file'
+    DECLARE_PACAKGE     = 'pacakge'
     DECLARE_MODULE      = 'module'
 
     ROOT_LEVEL          = 'root-level'

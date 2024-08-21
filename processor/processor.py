@@ -14,7 +14,7 @@ def process_notebook(notebook_path, output_path, root_package='.'):
     # read notebook
     unparsed_cells = read_notebook(notebook_path)
     
-    # build module tree
+    # init the module tree
     root = ModuleNode(root_package)
     current_node = root
     node_stack = [root]
@@ -30,7 +30,7 @@ def process_notebook(notebook_path, output_path, root_package='.'):
                     node_stack.pop()
 
                 # if we're on the same level as the stack's current node,
-                # we move back to the correct parent level
+                # we move back up to the correct parent level
                 if len(node_stack) == header.level:
                     node_stack.pop()
 
@@ -45,16 +45,6 @@ def process_notebook(notebook_path, output_path, root_package='.'):
         elif cell.cell_type == 'code':
             parsed_code = parse_code_cell(cell.cell_idx, cell.raw_source, current_node)
             current_node.add_parsed_cell(parsed_code)
-
-    from .cda import UsageVisitor
-    def pretty(d, indent=0):
-        for key, value in d.items():
-            print('\t' * indent + str(key))
-            if isinstance(value, dict):
-                pretty(value, indent+1)
-            else:
-                print('\t' * (indent+1) + str(value))
-    pretty(UsageVisitor.get_definitions(), 1)
     
     # write the parsed module tree
     write_modules(root, output_path)
