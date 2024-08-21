@@ -29,7 +29,6 @@ class UsageVisitor(ast.NodeVisitor):
     def __init__(self, local_module_path):
         self.local_module_path = local_module_path
         self.used_names = set()         # usage tracker
-        self.required_imports = {}      # dependencies
         self.local_scope = []           # for scope-awareness (this is used to detect definition shadowing)
 
 
@@ -40,6 +39,7 @@ class UsageVisitor(ast.NodeVisitor):
             # ONLY if it is declared in the global scope
             UsageVisitor.__definitions_tracker[node.name] = {
                 'node': node,
+                'node_type': 'ImportFrom',
                 'module_path': self.local_module_path,
                 'is_local': True,
                 'alias': None
@@ -77,6 +77,7 @@ class UsageVisitor(ast.NodeVisitor):
         
         UsageVisitor.__definitions_tracker[node.name] = {
             'node': node,
+            'node_type': 'ImportFrom',
             'module_path': self.local_module_path,
             'is_local': True,
             'alias': None
@@ -87,7 +88,7 @@ class UsageVisitor(ast.NodeVisitor):
         self.local_scope.pop()
 
     def visit_Name(self, node):
-        
+
         if any(node.id in scope for scope in self.local_scope):
             # local variable, ignore
             pass
@@ -112,6 +113,7 @@ class UsageVisitor(ast.NodeVisitor):
                 defined_name = alias.asname or alias.name
                 UsageVisitor.__definitions_tracker[defined_name] = {
                     'node': import_node,
+                    'node_type': 'Import',
                     'module_path': alias.name,
                     'is_local': False,
                     'alias': alias.asname
@@ -124,34 +126,77 @@ class UsageVisitor(ast.NodeVisitor):
                 full_name = f"{module}" if module else alias.name
                 UsageVisitor.__definitions_tracker[defined_name] = {
                     'node': import_node,
+                    'node_type': 'ImportFrom',
                     'module_path': full_name,
                     'is_local': False,
                     'alias': alias.asname
                 }
 
-    def add_import(self, name, module, alias):
-        self.required_imports[name] = (module, alias)
-
     def get_usages(self):
         return self.used_names
+    
+
+    def __relative_import_path(self, target_module):
+        """
+        Builds up the relative import statement from the local module path 
+        and the passed target module paths.
+        """
+
+        prefix_len = 0
+        for i in range(min(len(self.local_module_path), len(target_module))):
+            if self.local_module_path[i] == target_module[i]:
+                prefix_len += 1
+            else:
+                break
+
+        up_levels = len(self.local_module_path) - prefix_len
+        down_path = target_module[prefix_len:]
+
+        if up_levels > 0:
+            return '.' * up_levels + '.'.join(down_path)
+        else:
+            return '.'.join(down_path)
+
 
     def get_dependencies(self):
         # generate import statements to inject the dependencies in the file-writing phase
+
+        # intersection between the used_names set | definitions
+        required_imports = {key: UsageVisitor.__definitions_tracker[key] \
+                            for key in self.used_names \
+                                if key in UsageVisitor.__definitions_tracker}
+        
+        print('\nRequired Imps', required_imports, '\n\n')
+        
         dependencies = []
         package_level_module = f'.{self.local_module_path[-2]}' if len(self.local_module_path) > 1 else ''
-        for name, (module, alias) in self.required_imports.items():
+        for name, definition in required_imports.items():
             # Debugging
-            print(f'\n----{self.local_module_path} > {name}: {module}, {alias}----\n')
+            print(f'\n----{self.local_module_path} > {name}: {definition}----\n')
 
+            alias = definition['alias']
+            module_path = definition['module_path']
+            is_local = definition['is_local']
             asname = f' as {alias}' if alias is not None else ''
 
-            if '.' in module: # from-import
-                # check for package-level relative module
-                base_module = package_level_module if module == '.' else module
-                dependencies.append(f'from {base_module} import {name}{asname}')
+            if module_path == self.local_module_path:
+                # used name was declared in this module; import is n/a
+                continue
+
+            if is_local:
+                # local/relative import statement
+                # adjust relative import path given the current module
+                module_path = self.__relative_import_path(module_path)
+            
+            if module_path == '.':
+                # package-level relative module
+                module_path = package_level_module
+
+            if definition['node_type'] == 'ImportFrom': # from-import
+                dependencies.append(f'from {module_path} import {name}{asname}')
 
             else: # regular import
-                dependencies.append(f'import {module}{asname}')
+                dependencies.append(f'import {module_path}{asname}')
 
         return dependencies
 
@@ -187,26 +232,6 @@ def __remove_ipy_statements(source):
     cleaned_source = magic_regex.sub(lambda match: f'# {match.group(0)}', source)
     return cleaned_source
 
-
-def __relative_import_path(current_module, target_module):
-    """
-    Builds up the relative import statement given the current and target module paths.
-    """
-
-    prefix_len = 0
-    for i in range(min(len(current_module), len(target_module))):
-        if current_module[i] == target_module[i]:
-            prefix_len += 1
-        else:
-            break
-
-    up_levels = len(current_module) - prefix_len
-    down_path = target_module[prefix_len:]
-
-    if up_levels > 0:
-        return '.' * up_levels + '.'.join(down_path)
-    else:
-        return '.'.join(down_path)
 
 
 def analyze_code_cell(source, current_module_path):
@@ -282,29 +307,35 @@ def analyze_code_cell(source, current_module_path):
     usage_visitor.visit(parsed_tree)
     
     # 5. analyze dependencies based on parsed AST usages
-    for used_name in usage_visitor.get_usages():
-        defs = UsageVisitor.get_definitions()
-        if used_name in defs:
-            definition_info = defs[used_name]
-            module_path = definition_info['module_path'] or None
+    dependencies = usage_visitor.get_dependencies()
 
-            if definition_info['is_local'] and module_path != current_module_path:
-                # relative import
-                rel_path = __relative_import_path(current_module_path, module_path)
-                usage_visitor.add_import(used_name, rel_path, definition_info['alias'])
+    # [DEPRECATED - the block below was simplified 
+    # and consolidated into `UsageVisitor.get_dependencies()`]
 
-            elif module_path != current_module_path:
-                # regular lib import
-                usage_visitor.add_import(used_name, module_path, definition_info['alias'])
+    # for used_name in usage_visitor.get_usages():
 
-            # else:
-            #     # the usage is within the same module, no import needed
+        # defs = UsageVisitor.get_definitions()
+        # if used_name in defs:
+        #     definition_info = defs[used_name]
+
+            # module_path = definition_info['module_path'] or None
+
+            # if definition_info['is_local'] and module_path != current_module_path:
+            #     # relative import
+            #     usage_visitor.add_import(used_name, rel_path, definition_info['alias'])
+
+            # elif module_path != current_module_path:
+            #     # regular lib import
+            #     usage_visitor.add_import(used_name, module_path, definition_info['alias'])
+
+            # # else:
+            # #     # the usage is within the same module, no import needed
             
 
     print(f'Used names for {".".join(current_module_path)}={usage_visitor.get_usages()}, dependencies={usage_visitor.get_dependencies()}\n')
 
     return {
         'source': extracted_source,
-        'dependencies': usage_visitor.get_dependencies(),
+        'dependencies': dependencies,
     }
 
