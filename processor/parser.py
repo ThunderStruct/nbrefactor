@@ -4,7 +4,7 @@ sys.path.append('..')
 
 import re
 from copy import copy
-from datastructs import MarkdownHeader, Command
+from datastructs import MarkdownHeader, MarkdownCommand
 from datastructs import ParsedCodeCell, ParsedMarkdownCell
 from .cda import analyze_code_cell
 
@@ -76,7 +76,7 @@ def parse_markdown_cell(cell_idx, source):
                     value = cmd_match.group('value')
                     
                     try:
-                        md_elements.append(Command(cmd_str, value))
+                        md_elements.append(MarkdownCommand(cmd_str, value))
                     except ValueError:
                         print((
                             f'WARNING: An invalid command type `{cmd_str}` in'

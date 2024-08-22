@@ -1,9 +1,11 @@
 
+import abc
+from . import MarkdownHeader, MarkdownCommand
 
 
-class ParsedCell:
+class ParsedCell(abc.ABC):
     """
-    Base class for parsed cells (purely virtual)
+    Base class for parsed cells (purely virtual; just for typing purposes)
     """
     def __init__(self):
         pass
@@ -28,15 +30,24 @@ class ParsedCodeCell(ParsedCell):
     
 
 class ParsedMarkdownCell(ParsedCell):
-    def __init__(self, headers, commands):
+    def __init__(self, elements):
         super(ParsedMarkdownCell, self).__init__()
-        self.headers = headers
-        self.commands = commands  # custom commands added to overwrite module/filename etc.
+        
+        self.elements = elements    # a list of both MarkdownHeader and MarkdownCommand objects
 
     def __str__(self):
-        parsed_head_str = ''.join(f'\n\t\t\t{h}' for h in self.headers)
-        parsed_cmd_str = ''.join(f'\n\t\t\t{cmd}' for cmd in self.commands)
-        return f'\n\tParsedMarkdownCell(\n\t\tHeaders: [{parsed_head_str}]\n\t\tCommands: [{parsed_cmd_str}]\n\t)'
+        elements_str = ''.join(f'\n\t\t\t{el}' for el in self.elements)
+        return f'\n\tParsedMarkdownCell(\n\t\Directives: [{elements_str}]\n\t)'
 
     def __repr__(self):
         return str(self)
+    
+    @property
+    def headers(self):
+        return [isinstance(elem, MarkdownHeader) for elem in self.elements]
+    
+    @property
+    def commands(self):
+        return [isinstance(elem, MarkdownCommand) for elem in self.elements]
+    
+    

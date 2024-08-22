@@ -1,6 +1,17 @@
-from enum import Enum, auto
 
-class CommandType(Enum):
+import abc
+from enum import Enum
+
+class MarkdownElement(abc.ABC):
+    """
+    Base class for markdown elements (purely virtual; just for typing purposes)
+    """
+    
+    def __init__(self):
+        pass
+    
+
+class MarkdownCommandType(Enum):
 
     IGNORE_PACKAGE      = 'ignore-package'
     IGNORE_MODULE       = 'ignore-module'
@@ -12,9 +23,9 @@ class CommandType(Enum):
     ROOT_LEVEL          = 'root-level'
 
 
-class Command:
+class MarkdownCommand(MarkdownElement):
     def __init__(self, cmd_str, value):
-        self.type = CommandType(cmd_str)    # raises value error if invalid
+        self.type = MarkdownCommandType(cmd_str)    # raises value error if invalid
 
         if value is not None:
             self.value = value
@@ -26,10 +37,10 @@ class Command:
     # @staticmethod
     # def init_from(cmd_str, value):
     #     """
-    #     Factory method to safely instantiate CommandType objects from strings
+    #     Factory method to safely instantiate MarkdownCommandType objects from strings
     #     """
     #     try:
-    #         cmd_type = CommandType(cmd_str)
+    #         cmd_type = MarkdownCommandType(cmd_str)
     #         return Command(cmd_type, value)
         
     #     except ValueError:
@@ -38,7 +49,23 @@ class Command:
     #         return None
 
     def __str__(self):
-        return f'Command(cmd_type: {self.type}, value: {self.value})'
+        return f'MarkdownCommandType(cmd_type: {self.type}, value: {self.value})'
     
     def __repr__(self):
         return str(self)
+    
+
+class MarkdownHeader(MarkdownElement):
+
+    def __init__(self, name, level):
+
+        self.name = name
+        self.level = level
+
+
+    def __str__(self):
+        return f'MarkdownHeader(Name: "{self.name}", Level: {self.level})'
+    
+    def __repr__(self):
+        return str(self)
+    
