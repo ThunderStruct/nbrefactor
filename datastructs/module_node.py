@@ -8,6 +8,7 @@ class ModuleNode:
         self.parent = parent
         self.children = {}
         self.parsed_cells = []
+        self.node_type = None       # ['package', 'module']
 
     def add_child(self, child_node):
         self.children[child_node.name] = child_node
@@ -25,6 +26,12 @@ class ModuleNode:
     
     def has_children(self):
         return len(self.children) > 0
+    
+    def set_node_type(self, node_type):
+        """
+        Forces a node type (through a MarkdownCommand)
+        """
+        self.node_type = node_type
 
     def __str__(self):
-        return f'ModuleNode(name={self.name}, parent={self.parent.name}, children={list(self.children.keys())}, parsed cells={self.parsed_cells})'
+        return f'ModuleNode(name={self.name}, type={self.node_type or ""}, parent={self.parent.name}, children={list(self.children.keys())}, parsed cells={self.parsed_cells})'

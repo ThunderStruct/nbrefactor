@@ -20,6 +20,7 @@ class MarkdownCommandType(Enum):
     DECLARE_PACAKGE     = 'pacakge'
     DECLARE_MODULE      = 'module'
 
+    NODE_DEPTH          = 'depth'
     ROOT_LEVEL          = 'root-level'
 
 
