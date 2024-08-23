@@ -232,7 +232,6 @@ def __remove_ipy_statements(source):
     cleaned_source = magic_regex.sub(lambda match: f'# {match.group(0)}', source)
     return cleaned_source
 
-
 def analyze_code_cell(source, current_module_path):
     """
     Analyzes dependencies and track declared definitions from a given code block.
