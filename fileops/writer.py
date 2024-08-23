@@ -17,7 +17,7 @@ def write_modules(node, output_path):
         output_path (str): the path where the Python files should be written.
     """
     
-    if not node.children:
+    if not node.children and node.has_code_cells():
         # leaf node -> this is a module, write file
         filename = f'{node.name}.py'
         file_path = os.path.join(output_path, filename)
