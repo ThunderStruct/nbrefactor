@@ -133,4 +133,4 @@ dmypy.json
 .pyre/
 
 # Generated results
-examples/*/
+demo/examples/*/
