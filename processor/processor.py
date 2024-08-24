@@ -34,7 +34,7 @@ def process_notebook(notebook_path, output_path, root_package='.'):
 
                     # if we're on the same level as the stack's current node,
                     # we move back up to the correct parent level
-                    if len(node_stack) == header.level:
+                    if len(node_stack) == header.level and len(node_stack) > 1:
                         node_stack.pop()
 
                     new_node = ModuleNode(header_name, node_stack[-1])

@@ -78,10 +78,13 @@ def parse_markdown_cell(cell_idx, source):
                     try:
                         md_elements.append(MarkdownCommand(cmd_str, value))
                     except ValueError:
-                        print((
-                            f'WARNING: An invalid command type `{cmd_str}` in'
-                            f' Cell #{cell_idx} was found and ignored.'
-                        ))
+                        pass    # just ignore, 
+                                # no need to warn as MathJax commands also start with $
+                                
+                        # print((
+                        #     f'WARNING: An invalid command type `{cmd_str}` in'
+                        #     f' Cell #{cell_idx} was found and ignored.'
+                        # ))
 
             continue
 

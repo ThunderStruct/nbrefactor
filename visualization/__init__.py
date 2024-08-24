@@ -1,1 +1,1 @@
-from .vis_module_tree import visualize_module_tree
+from .plot_module_tree import plot_module_tree

@@ -1,8 +1,7 @@
 
 from graphviz import Digraph
-from ..fileops import ensure_dir
 
-def visualize_module_tree(root_node, output_path='./module_tree.pdf'):
+def plot_module_tree(root_node, format='pdf'):
     """
     Visualize the :class:`~ModuleNode` tree structure and save it as a PDF.
 
@@ -12,6 +11,9 @@ def visualize_module_tree(root_node, output_path='./module_tree.pdf'):
     Args:
         root_node (:class:`~ModuleNode`): the root node of the tree to visualize.
         output_path (str): the file path where the PDF should be saved.
+
+    Returns:
+        :class:`graphviz.Digraph`: the module tree graph to be plotted or saved
     """
 
     def add_nodes_edges(graph, node, parent_name=None):
@@ -32,9 +34,6 @@ def visualize_module_tree(root_node, output_path='./module_tree.pdf'):
     # recursively add the tree nodes to the DAG
     add_nodes_edges(dag, root_node)
 
-    # ensure existence of the given output_path
-    ensure_dir(output_path)
-
-    # render to pdf
-    dag.format = 'pdf'
-    dag.render(output_path, cleanup=True)
+    dag.format = format
+    
+    return dag
