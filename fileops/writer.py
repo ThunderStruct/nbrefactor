@@ -48,7 +48,8 @@ def write_modules(node, output_path):
 
                             We use Markdown headers as both directories (packages) and file names (modules).
                             The autonmous, non-command-based method to distinguish between the two is checking
-                            if the node in the tree has children, if it does, then it is a dir, else it is a module
+                            if the node in the tree has children (leaf node). If it does -> it is a dir, 
+                            else -> it is a module
 
                             The problem is that a package-level modules 
                             (i.e. , ./root/package_a/package_a.py, where package_a 
@@ -81,7 +82,8 @@ def write_modules(node, output_path):
                             
                             I hate to think it but... We might need to restructure the parsing logic to do 2 passes, 
                             first one figures out packages/modules, second one parses. 
-                            For now, we add a '.' manually :)
+                            
+                            For now, we bite the bullet and add a '.' manually (I won't be able to sleep peacefully)
                             """
                             if dependency.startswith('from .'):
                                 hacky_dependency = dependency.replace('from .', 'from ..')

@@ -22,7 +22,10 @@ class ModuleNode:
         return [self.name]
     
     def has_code_cells(self):
-        return any([True for cell in self.parsed_cells if isinstance(cell, ParsedCodeCell)])
+        """
+        Checks if the node has non-empty code cells (we only write modules/.py files if this is true)
+        """
+        return any([True for cell in self.parsed_cells if isinstance(cell, ParsedCodeCell) and len(cell.parsed_source.strip())])
     
     def has_children(self):
         return len(self.children) > 0

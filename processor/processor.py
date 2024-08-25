@@ -8,9 +8,9 @@ sys.path.append('..')
 from datastructs import ModuleNode, MarkdownHeader, MarkdownCommand, MarkdownCommandType
 from fileops import read_notebook, write_modules
 from .parser import parse_code_cell, parse_markdown_cell
+ 
 
 def process_notebook(notebook_path, output_path, root_package='.'):
-
     # read notebook
     unparsed_cells = read_notebook(notebook_path)
     
@@ -21,6 +21,7 @@ def process_notebook(notebook_path, output_path, root_package='.'):
 
     # parse all cells
     for cell in unparsed_cells:
+        
         if cell.cell_type == 'markdown':
             parsed_md = parse_markdown_cell(cell.cell_idx, cell.raw_source)
             for md_element in parsed_md.elements:
@@ -29,12 +30,12 @@ def process_notebook(notebook_path, output_path, root_package='.'):
                     header = md_element
                     header_name = header.name.replace('.', '').replace(' ', '_').replace('-', '_').lower()
 
-                    while len(node_stack) > header.level:
+                    while len(node_stack) > header.level + 1:
                         node_stack.pop()
 
                     # if we're on the same level as the stack's current node,
-                    # we move back up to the correct parent level
-                    if len(node_stack) == header.level and len(node_stack) > 1:
+                    # we move back up to the correct parent level (without popping the root node)
+                    if len(node_stack) == header.level + 1 and len(node_stack) > 1:
                         node_stack.pop()
 
                     new_node = ModuleNode(header_name, node_stack[-1])
