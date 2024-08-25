@@ -168,7 +168,7 @@ class UsageVisitor(ast.NodeVisitor):
         
         print('\nRequired Imps', required_imports, '\n\n')
         
-        dependencies = []
+        dependencies = set()
         package_level_module = f'.{self.local_module_path[-2]}' if len(self.local_module_path) > 1 else ''
         for name, definition in required_imports.items():
             # Debugging
@@ -193,10 +193,10 @@ class UsageVisitor(ast.NodeVisitor):
                 module_path = package_level_module
 
             if definition['node_type'] == 'ImportFrom': # from-import
-                dependencies.append(f'from {module_path} import {name}{asname}')
+                dependencies.add(f'from {module_path} import {name}{asname}')
 
             else: # regular import
-                dependencies.append(f'import {module_path}{asname}')
+                dependencies.add(f'import {module_path}{asname}')
 
         return dependencies
 
@@ -226,10 +226,10 @@ def __remove_ipy_statements(source):
     # return magic_pruned
 
     # remove lines that start with % or ! with regex rather than ast transformer
-    magic_regex = re.compile(r'^\s*(%|\!).*$', re.MULTILINE)
+    magic_regex = re.compile(r'^\s*([!%].*)$', re.MULTILINE)
 
     # simply comment the statement out rather than remove it (felt wrong to just remove it)
-    cleaned_source = magic_regex.sub(lambda match: f'# {match.group(0)}', source)
+    cleaned_source = magic_regex.sub('# \1', source)
     return cleaned_source
 
 

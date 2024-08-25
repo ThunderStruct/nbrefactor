@@ -2,10 +2,12 @@
 
 """
 
+import re
 import sys
 sys.path.append('..')
 
-from datastructs import ModuleNode, MarkdownHeader, MarkdownCommand, MarkdownCommandType
+from datastructs import ModuleNode, ParsedCodeCell
+from datastructs import MarkdownHeader, MarkdownCommand, MarkdownCommandType
 from fileops import read_notebook, write_modules
 from .parser import parse_code_cell, parse_markdown_cell
  
@@ -23,12 +25,13 @@ def process_notebook(notebook_path, output_path, root_package='.'):
     for cell in unparsed_cells:
         
         if cell.cell_type == 'markdown':
+            # MARKDOWN CELL
             parsed_md = parse_markdown_cell(cell.cell_idx, cell.raw_source)
             for md_element in parsed_md.elements:
                 if isinstance(md_element, MarkdownHeader):
                     # handle MarkdownHeader
                     header = md_element
-                    header_name = header.name.replace('.', '').replace(' ', '_').replace('-', '_').lower()
+                    header_name = __sanitize_node_name(header.name)
 
                     while len(node_stack) > header.level + 1:
                         node_stack.pop()
@@ -51,6 +54,7 @@ def process_notebook(notebook_path, output_path, root_package='.'):
             current_node.add_parsed_cell(parsed_md)
 
         elif cell.cell_type == 'code':
+            # CODE CELL
             parsed_code = parse_code_cell(cell.cell_idx, cell.raw_source, current_node)
             current_node.add_parsed_cell(parsed_code)
     
@@ -130,3 +134,23 @@ def __handle_markdown_command(command, current_node, node_stack):
     elif command.type == MarkdownCommandType.IGNORE_CELL:
         # this is only here for completeness
         pass
+
+
+def __sanitize_node_name(node_name, default_name='unnamed'):
+    """
+    Sanitizes a given node name (typically a Markdown header name).
+
+    Args:
+        node_name (str): the given (potentially invalid) node name
+
+    Returns:
+        str: sanitized/valid filename
+    """
+
+    node_name = node_name.replace(' ', '_').replace('-', '_').lower()
+    node_name = re.sub(r'[^a-z0-9_]', '', node_name)
+
+    # trim leading/trailing underscores
+    node_name = node_name.strip('_')
+
+    return node_name or default_name
