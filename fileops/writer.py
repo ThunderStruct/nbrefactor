@@ -19,7 +19,7 @@ def write_modules(node, output_path):
     
     if not node.children and node.has_code_cells():
         # leaf node -> this is a module, write file
-        __write_module_node(node, output_path, is_package_level=True)
+        __write_module_node(node, output_path, is_package_level=False)
 
     else:
         # node has children -> create dir
@@ -87,7 +87,7 @@ def __write_module_node(node, output_path, is_package_level=False):
         
         # inject imports / dependencies
         for dependency in node.aggregate_dependencies():
-            if is_package_level and dependency.startswith('from .') and node.has_children:
+            if is_package_level and dependency.startswith('from .'):
                 hacky_dependency = dependency.replace('from .', 'from ..')
                 f.write(hacky_dependency + '\n')
             else:

@@ -39,8 +39,9 @@ class ModuleNode:
         return len(self.children) > 0
     
 
-    def is_root(self):
-        return self.parent is None
+    def is_top_level_module(self):
+        # has parent but no grand-parent (i.e. parent is the root)
+        return self.parent is not None and self.parent.parent is None
     
 
     def set_node_type(self, node_type):
