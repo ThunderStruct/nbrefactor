@@ -3,13 +3,14 @@
 from .parsed_cell import ParsedCodeCell
 
 class ModuleNode:
-    
-    def __init__(self, name, parent=None):
+
+    def __init__(self, name, parent=None, depth=0, node_type=None):
         self.name = name
         self.parent = parent
         self.children = {}
         self.parsed_cells = []
-        self.node_type = None       # ['package', 'module']
+        self.depth = depth
+        self.node_type = node_type       # ['package', 'module']
 
 
     def add_child(self, child_node):
@@ -30,11 +31,16 @@ class ModuleNode:
         """
         Checks if the node has non-empty code cells (we only write modules/.py files if this is true)
         """
-        return any([True for cell in self.parsed_cells if isinstance(cell, ParsedCodeCell) and len(cell.parsed_source.strip())])
+        return any([True for cell in self.parsed_cells \
+                    if isinstance(cell, ParsedCodeCell) and len(cell.parsed_source.strip())])
     
 
     def has_children(self):
         return len(self.children) > 0
+    
+
+    def is_root(self):
+        return self.parent is None
     
 
     def set_node_type(self, node_type):
@@ -58,4 +64,8 @@ class ModuleNode:
 
 
     def __str__(self):
-        return f'ModuleNode(name={self.name}, type={self.node_type or ""}, parent={self.parent.name}, children={list(self.children.keys())}, parsed cells={self.parsed_cells})'
+        return (
+            f'ModuleNode(name={self.name}, type={self.node_type or ""}, '
+            f'parent={self.parent.name}, children={list(self.children.keys())}, '
+            f'parsed cells={self.parsed_cells})'
+        )

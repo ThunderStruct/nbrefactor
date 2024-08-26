@@ -33,19 +33,31 @@ def process_notebook(notebook_path, output_path, root_package='.'):
                     header = md_element
                     header_name = __sanitize_node_name(header.name)
 
-                    while len(node_stack) > header.level + 1:
-                        node_stack.pop()
+                    new_depth = header.level
+                    current_depth = current_node.depth
 
-                    # if we're on the same level as the stack's current node,
-                    # we move back up to the correct parent level (without popping the root node)
-                    if len(node_stack) == header.level + 1 and len(node_stack) > 1:
+                    # infer node position / depth
+                    if new_depth > current_depth:
+                        # need to move deeper -> add child node
+                        new_node = ModuleNode(header_name, current_node, depth=new_depth)
+                        current_node.add_child(new_node)
+                        node_stack.append(new_node)
+                    elif new_depth == current_depth:
+                        # same level -> replace current node
                         node_stack.pop()
-
-                    new_node = ModuleNode(header_name, node_stack[-1])
-                    node_stack[-1].add_child(new_node)
-                    node_stack.append(new_node)
+                        new_node = ModuleNode(header_name, current_node.parent, depth=new_depth)
+                        current_node.parent.add_child(new_node)
+                        node_stack.append(new_node)
+                    else:
+                        # need to move up th hierarchy -> pop the stack until target depth is reached
+                        while node_stack and node_stack[-1].depth >= new_depth:
+                            node_stack.pop()
+                        new_node = ModuleNode(header_name, node_stack[-1], depth=new_depth)
+                        node_stack[-1].add_child(new_node)
+                        node_stack.append(new_node)
 
                     current_node = new_node
+
 
                 elif isinstance(md_element, MarkdownCommand):
                     # handle MarkdownCommand

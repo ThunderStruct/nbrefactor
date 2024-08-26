@@ -87,7 +87,7 @@ def __write_module_node(node, output_path, is_package_level=False):
         
         # inject imports / dependencies
         for dependency in node.aggregate_dependencies():
-            if is_package_level and dependency.startswith('from .'):         # the hacky bit :(
+            if is_package_level and dependency.startswith('from .') and node.has_children:
                 hacky_dependency = dependency.replace('from .', 'from ..')
                 f.write(hacky_dependency + '\n')
             else:

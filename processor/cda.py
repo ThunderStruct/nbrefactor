@@ -166,13 +166,11 @@ class UsageVisitor(ast.NodeVisitor):
                             for key in self.used_names \
                                 if key in UsageVisitor.__definitions_tracker}
         
-        print('\nRequired Imps', required_imports, '\n\n')
-        
         dependencies = set()
         package_level_module = f'.{self.local_module_path[-2]}' if len(self.local_module_path) > 1 else ''
         for name, definition in required_imports.items():
             # Debugging
-            print(f'\n----{self.local_module_path} > {name}: {definition}----\n')
+            # print(f'\n----{self.local_module_path} > {name}: {definition}----\n')
 
             alias = definition['alias']
             module_path = definition['module_path']
@@ -226,10 +224,14 @@ def __remove_ipy_statements(source):
     # return magic_pruned
 
     # remove lines that start with % or ! with regex rather than ast transformer
-    magic_regex = re.compile(r'^\s*([!%].*)$', re.MULTILINE)
+    magic_regex = re.compile(r'^(\s*)([!%].*)$', re.MULTILINE)
 
     # simply comment the statement out rather than remove it (felt wrong to just remove it)
-    cleaned_source = magic_regex.sub('# \1', source)
+    # we also account for indented blocks now 
+    # (i.e. magic statements as sole statements in if-blocks could be problemtic, 
+    # we now add a `pass` statement prior to the commented match)
+    cleaned_source = magic_regex.sub(r'\1pass # \2', source)
+
     return cleaned_source
 
 
@@ -329,9 +331,6 @@ def analyze_code_cell(source, current_module_path):
 
             # # else:
             # #     # the usage is within the same module, no import needed
-            
-
-    print(f'Used names for {".".join(current_module_path)}={usage_visitor.get_usages()}, dependencies={usage_visitor.get_dependencies()}\n')
 
     return {
         'source': extracted_source,
