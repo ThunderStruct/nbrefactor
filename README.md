@@ -3,7 +3,7 @@
 
 
 
-# ![PyNBRefactor Logo]())
+# ![PyNBRefactor Logo](logo.svg)
 
  [![Platform](https://img.shields.io/badge/python-v3.7-green)](https://github.com/ThunderStruct/PyNBRefactor) [![pypi](https://img.shields.io/badge/pypi%20package-0.1.5-lightgrey.svg)](https://pypi.org/project/PyNBRefactor/0.1.0/) [![License](https://img.shields.io/badge/license-MIT-orange)](https://github.com/ThunderStruct/PyNBRefactor/blob/master/LICENSE) [![Read the Docs](https://readthedocs.org/projects/pynbrefactor/badge/?version=latest)](https://pynbrefactor.readthedocs.io/en/latest/)
 
@@ -82,6 +82,6 @@ PyNBRefactor is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contributing
 
-PRs are welcome (and encouraged)! If you'd like to contribute to PyNBRefactor, please read the [CONTRIBUTING](https://github.com/ThunderStruct/PyNBRefactor/blob/main/CONTRIBUTING.md) guidelines.
+PRs are welcome (and encouraged)! If you'd like to contribute to PyNBRefactor, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
 
