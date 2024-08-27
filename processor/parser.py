@@ -47,7 +47,11 @@ def parse_markdown_cell(cell_idx, source):
 
     md_str = copy(source)   # copied to prevent in-place modification
 
-    comment_regex = re.compile(r'<!--(?P<comment>(?:(.|\n)*?))-->')
+    # Checking for multiline HTML comments whilst preserving the sequential order of
+    # headers and commands is such a pain (since regex is not really a "parser")
+    # For now, we'll just assess each line individually to extract headers/commands
+    # comment_regex = re.compile(r'<!--(?P<comment>(?:(.|\n)*?))-->')
+
     cmd_regex = re.compile(r'^\$(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*))?$', re.MULTILINE)
 
     md_elements = []        # both the Command + MarkdownHeader objects, in the order they appear in
@@ -60,32 +64,33 @@ def parse_markdown_cell(cell_idx, source):
     for line in md_str.split('\n'):
         clean_line = line.strip()
 
-        # HTML comments' matching (potentially Command objects)
-        comment_match = comment_regex.search(clean_line)
-        if comment_match:
-            comment = comment_match.group('comment')
-            comment_lines = comment.split('\n')
+        # [DEPRECATED / possibly left for future implementations]
+        # # HTML comments' matching (potentially Command objects)
+        # comment_match = comment_regex.search(clean_line)
+        # if comment_match:
+        #     comment = comment_match.group('comment')
+        #     comment_lines = comment.split('\n')
+        #     for comment_line in comment_lines:
+        #         # parse comment lines (we're allowing multiple commands 
+        #         # in a single comment block)
 
-            for comment_line in comment_lines:
-                # parse comment lines (we're allowing multiple commands 
-                # in a single comment block)
-
-                cmd_match = cmd_regex.match(comment_line.strip())
-                if cmd_match:
-                    cmd_str = cmd_match.group('command')
-                    value = cmd_match.group('value')
-                    
-                    try:
-                        md_elements.append(MarkdownCommand(cmd_str, value))
-                    except ValueError:
-                        pass    # just ignore, 
-                                # no need to warn as MathJax commands also start with $
-                                
-                        # print((
-                        #     f'WARNING: An invalid command type `{cmd_str}` in'
-                        #     f' Cell #{cell_idx} was found and ignored.'
-                        # ))
-
+        cmd_match = cmd_regex.match(clean_line.strip())
+        if cmd_match:
+            cmd_str = cmd_match.group('command')
+            value = cmd_match.group('value')
+            
+            try:
+                cmd = MarkdownCommand(cmd_str, value)   # will raise a value error if the cmd_str is invalid
+                md_elements.append(cmd)
+            except ValueError:
+                continue    # just ignore, 
+                            # no need to warn as MathJax commands also start with $
+                        
+                # print((
+                #     f'WARNING: An invalid command type `{cmd_str}` in'
+                #     f' Cell #{cell_idx} was found and ignored.'
+                # ))
+                
             continue
 
         # MD header -> extract node depth/level and name of package/module

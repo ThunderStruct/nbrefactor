@@ -108,8 +108,10 @@ def __handle_markdown_command(command, current_node, node_stack):
         current_node (ModuleNode): the current module node in the tree
         node_stack (list): the stack representing the current path in the module tree
     """
-    if command.type == MarkdownCommandType.NODE_NAME:
-        # override the current node's name with the specified module name
+
+    if command.type in [MarkdownCommandType.NODE_NAME, MarkdownCommandType.SET_PACKAGE, MarkdownCommandType.SET_MODULE]:
+        # override the current node's name 
+        # (for now we're ignoring the part where we override the node type (package/module))
         clean_name = __sanitize_node_name(command.value)
         current_node.rename(clean_name)
 

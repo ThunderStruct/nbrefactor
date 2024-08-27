@@ -17,7 +17,9 @@ class MarkdownCommandType(Enum):
     IGNORE_MODULE       = 'ignore-module'
     IGNORE_CELL         = 'ignore-cell'
 
-    NODE_NAME           = 'node-name'
+    SET_PACKAGE         = 'package'         # sets the node name (and asserts node type; not implemented yet)
+    SET_MODULE          = 'module'          # sets the node name (and asserts node type; not implemented yet)
+    NODE_NAME           = 'node-name'       # sets the node name generically regardless of node type
     # NODE_DEPTH          = 'node-depth'
 
 
@@ -49,7 +51,7 @@ class MarkdownCommand(MarkdownElement):
     #         return None
 
     def __str__(self):
-        return f'MarkdownCommandType(cmd_type: {self.type}, value: {self.value})'
+        return f'MarkdownCommand(cmd_type: {self.type}, value: {self.value})'
     
     def __repr__(self):
         return str(self)
