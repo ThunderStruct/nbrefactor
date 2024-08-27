@@ -17,11 +17,8 @@ class MarkdownCommandType(Enum):
     IGNORE_MODULE       = 'ignore-module'
     IGNORE_CELL         = 'ignore-cell'
 
-    DECLARE_PACAKGE     = 'pacakge'
-    DECLARE_MODULE      = 'module'
-
-    NODE_DEPTH          = 'depth'
-    ROOT_LEVEL          = 'root-level'
+    NODE_NAME           = 'node-name'
+    # NODE_DEPTH          = 'node-depth'
 
 
 class MarkdownCommand(MarkdownElement):
@@ -31,6 +28,8 @@ class MarkdownCommand(MarkdownElement):
         if value is not None:
             self.value = value
         else:
+            assert self.type != MarkdownCommandType.NODE_NAME, 'You must provide a value for a NODE_NAME command'
+
             self.value = True   # defaults to True 
                                 # (i.e. `ignore-cell` is equiv. to 
                                 # `ignore-cell=True`)

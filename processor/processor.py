@@ -87,11 +87,11 @@ def __handle_markdown_command(command, current_node, node_stack):
         # Root
         ## Some Header
         <!--- 
-            $module=my_module.py 
+            $node-name=my_module
         -->
 
         ## Package
-        <!--- $package=my_package -->
+        <!--- $node-name=my_package -->
 
         ### subpackage
         #### Sub-module
@@ -108,29 +108,18 @@ def __handle_markdown_command(command, current_node, node_stack):
         current_node (ModuleNode): the current module node in the tree
         node_stack (list): the stack representing the current path in the module tree
     """
-    if command.type == MarkdownCommandType.DECLARE_MODULE:
-        # override the current module's name with the specified module name
-        new_node_name = command.value.replace('.', '').replace(' ', '_').replace('-', '_').lower()
-        new_node = ModuleNode(new_node_name, current_node.parent)
-        new_node.set_node_type('module')
-        current_node.parent.add_child(new_node)
-        node_stack[-1] = new_node
+    if command.type == MarkdownCommandType.NODE_NAME:
+        # override the current node's name with the specified module name
+        clean_name = __sanitize_node_name(command.value)
+        current_node.rename(clean_name)
 
-    elif command.type == MarkdownCommandType.DECLARE_PACAKGE:
-        # create a new package node at the current level
-        package_name = command.value.replace('.', '').replace(' ', '_').replace('-', '_').lower()
-        new_node = ModuleNode(package_name, current_node)
-        new_node.set_node_type('package')
-        current_node.add_child(new_node)
-        node_stack.append(new_node)
-        current_node = new_node
-
-    elif command.type == MarkdownCommandType.NODE_DEPTH:
-        # adjust the node depth (if applicable)
-        desired_depth = int(command.value)
-        while len(node_stack) > desired_depth + 1:
-            node_stack.pop()
-        current_node = node_stack[-1]
+    # TODO: possibly add this in future iterations of the lib, needs more testing for robustness
+    # elif command.type == MarkdownCommandType.NODE_DEPTH:
+    #     # adjust the node depth (if applicable)
+    #     desired_depth = int(command.value)
+    #     while len(node_stack) > desired_depth + 1:
+    #         node_stack.pop()
+    #     current_node = node_stack[-1]
 
     elif command.type == MarkdownCommandType.IGNORE_MODULE:
         # pop the stack to ignore a single module

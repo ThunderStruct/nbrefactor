@@ -52,6 +52,10 @@ class ModuleNode:
         self.node_type = node_type
 
 
+    def rename(self, new_name):
+        self.name = new_name
+
+
     def aggregate_dependencies(self):
         """
         Gets the union of all `dependencies` sets
