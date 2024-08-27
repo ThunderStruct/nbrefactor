@@ -79,10 +79,10 @@ Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for t
 
 # License
 
-NBRefactor is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+**nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 # Contributing
 
-PRs are welcome (and encouraged)! If you'd like to contribute to NBRefactor, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines.
+PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
 
