@@ -78,8 +78,15 @@ def __write_module_node(node, output_path, is_package_level=False):
     first one figures out packages/modules, second one parses. 
     
     For now, we bite the bullet and add a '.' manually (I won't be able to sleep peacefully)
-    """
 
+    Args:
+        node (ModuleNode): the current node representing a module or package.
+        output_path (str): the path where the Python files should be written.
+        is_package_level (bool): whether this node is a package-levle module \
+            (i.e. node has sub-packages + code cell(s). This creates a dir AND a \
+            `.py` module).
+    """
+    
     filename = f'{node.name}.py'
     file_path = os.path.join(output_path, filename)
 

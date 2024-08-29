@@ -13,14 +13,30 @@ class MarkdownElement(abc.ABC):
 
 class MarkdownCommandType(Enum):
 
-    IGNORE_PACKAGE      = 'ignore-package'
-    IGNORE_MODULE       = 'ignore-module'
-    IGNORE_CELL         = 'ignore-cell'
+    # Node-Skipping Commands
+    IGNORE_PACKAGE      = 'ignore-package'      # ignores all modules/packages encountered until a (<= depth) is reached
+    IGNORE_MODULE       = 'ignore-module'       # ignores a single module (could consist of multiple code cells)
+    IGNORE_CELL         = 'ignore-cell'         # ignores the next code-cell, regardless of its type.
+    IGNORE_MARKDOWN     = 'ignore-markdown'     # ignores the current Markdown cell (e.g. when MD is used for instructions only)
 
-    SET_PACKAGE         = 'package'         # sets the node name (and asserts node type; not implemented yet)
-    SET_MODULE          = 'module'          # sets the node name (and asserts node type; not implemented yet)
-    NODE_NAME           = 'node-name'       # sets the node name generically regardless of node type
-    # NODE_DEPTH          = 'node-depth'
+    # Node-Manipulation Commands
+    RENAME_PACKAGE      = 'package'             # sets the package name (and asserts node type)
+    RENAME_MODULE       = 'module'              # sets the module name (and asserts node type)
+    RENAME_NODE         = 'node'                # sets the node name generically regardless of node type
+
+    # Node-Declaration Commands all take a string value for the node name
+    # and are placed at sibling-depth in the node tree.
+    # TODO: could optionally accept tuples of (name, level) for better customizability,
+    # no need to even properly parse this, we could just try-except type-casting the value.
+    # If the project grows, we can maybe define an EBNF grammar for all the options? overkill?
+    DECLARE_PACKAGE     = 'declare-package'     # declares a new node and asserts its 'package' type
+    DECLARE_MODULE      = 'declare-module'      # declares a new node and asserts its 'module' type
+    DECLARE_NODE        = 'declare-node'        # declares a new node, type will be kept as 'None' and inferred accordingly
+
+    # Potential future implementations
+    # NODE_DEPTH          = 'node-depth'        # overrides the node's `level` (need to figure out the necessary constraints here)
+    # PREPEND_VALUE       = 'prepend'           # prepends a given string value to the next code-cell
+    # APPEND_VALUE        = 'append'            # appends a given string value to the next code-cell
 
 
 class MarkdownCommand(MarkdownElement):

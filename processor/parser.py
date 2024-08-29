@@ -52,7 +52,7 @@ def parse_markdown_cell(cell_idx, source):
     # For now, we'll just assess each line individually to extract headers/commands
     # comment_regex = re.compile(r'<!--(?P<comment>(?:(.|\n)*?))-->')
 
-    cmd_regex = re.compile(r'^\$(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*))?$', re.MULTILINE)
+    cmd_regex = re.compile(r'\$\b(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*?))(?=\s)')
 
     md_elements = []        # both the Command + MarkdownHeader objects, in the order they appear in
                             # we don't simlpy match and extract commands/headers across the raw source
@@ -75,7 +75,10 @@ def parse_markdown_cell(cell_idx, source):
         #         # in a single comment block)
 
         cmd_match = cmd_regex.match(clean_line.strip())
+
+        print(clean_line.strip())
         if cmd_match:
+            print(cmd_match)
             cmd_str = cmd_match.group('command')
             value = cmd_match.group('value')
             
