@@ -41,12 +41,34 @@ class MarkdownCommandType(Enum):
 
 class MarkdownCommand(MarkdownElement):
     def __init__(self, cmd_str, value):
-        self.type = MarkdownCommandType(cmd_str)    # raises value error if invalid
-
+        try:
+            self.type = MarkdownCommandType(cmd_str)    # raises value error if invalid
+        except:
+            # re-raise the error with our custom code and message
+            raise ValueError({
+                'source': 'MarkdownCommand',
+                'code': 1,
+                'type': 'Invalid Command',
+                'subject': cmd_str,
+                'message': f'An invalid command "{cmd_str}" was encountered'
+            })
+        
         if value is not None:
             self.value = value
         else:
-            assert self.type != MarkdownCommandType.NODE_NAME, 'You must provide a value for a NODE_NAME command'
+            if self.type in [MarkdownCommandType.RENAME_PACKAGE,
+                             MarkdownCommandType.RENAME_MODULE,
+                             MarkdownCommandType.RENAME_NODE,
+                             MarkdownCommandType.DECLARE_PACKAGE,
+                             MarkdownCommandType.DECLARE_NODE,
+                             MarkdownCommandType.DECLARE_NODE]:
+                raise ValueError({
+                    'source': 'MarkdownCommand',
+                    'code': 2,
+                    'type': 'Invalid Value',
+                    'subject': cmd_str,
+                    'message': f'A "{cmd_str}" command requires a value.'
+                })
 
             self.value = True   # defaults to True 
                                 # (i.e. `ignore-cell` is equiv. to 

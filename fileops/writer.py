@@ -8,6 +8,7 @@ import os
 from .utils import ensure_dir
 from datastructs import ParsedCodeCell
 
+
 def write_modules(node, output_path):
     """
     Recursively writes the modules and their contents given a :class:`~ModuleNode` tree hierarchy.
@@ -17,11 +18,16 @@ def write_modules(node, output_path):
         output_path (str): the path where the Python files should be written.
     """
     
-    if not node.children and node.has_code_cells():
-        # leaf node -> this is a module, write file
+    if (not node.children and node.has_code_cells()) or node.node_type == 'module':
+        # leaf node -> this is a module, write file OR
+        # asserted 'module' type -> write file
         __write_module_node(node, output_path, is_package_level=False)
 
     else:
+        if node.ignore_package:
+            # prune this branch
+            return
+        
         # node has children -> create dir
         module_path = os.path.join(output_path, node.name)
         ensure_dir(module_path)
@@ -87,11 +93,13 @@ def __write_module_node(node, output_path, is_package_level=False):
             `.py` module).
     """
     
-    filename = f'{node.name}.py'
+    if node.ignore_module:
+        return
+    
+    filename = f'{os.path.splitext(node.name)[0]}.py'   # assert .py extension if it does not exist
     file_path = os.path.join(output_path, filename)
 
     with open(file_path, 'w') as f:
-        
         # inject imports / dependencies
         for dependency in node.aggregate_dependencies():
             if is_package_level and dependency.startswith('from .'):

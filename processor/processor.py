@@ -4,25 +4,33 @@
 
 import re
 import sys
+from time import sleep
 sys.path.append('..')
 
-from datastructs import ModuleNode, ParsedCodeCell
+from tqdm.auto import tqdm
+
+from datastructs import ModuleNode
 from datastructs import MarkdownHeader, MarkdownCommand, MarkdownCommandType
 from fileops import read_notebook, write_modules
 from .parser import parse_code_cell, parse_markdown_cell
  
 
 def process_notebook(notebook_path, output_path, root_package='.'):
+    
     # read notebook
-    unparsed_cells = read_notebook(notebook_path)
+    print(f'Reading notebook at ({notebook_path})...')
+    sleep(0.25)     # for aesthetic purposes 0:)
+    unparsed_cells = read_notebook(notebook_path)       # exits if file does not exist/is invalid
+    print(f'Reading complete!\n')
     
     # init the module tree
     root = ModuleNode(root_package)
     current_node = root
     node_stack = [root]
+    accumulated_warnings = []
 
     # parse all cells
-    for cell in unparsed_cells:
+    for cell in tqdm(unparsed_cells, desc='Processing Notebook'):
         
         if cell.cell_type == 'markdown':
             # MARKDOWN CELL
@@ -63,13 +71,14 @@ def process_notebook(notebook_path, output_path, root_package='.'):
                         node_stack[-1].add_child(new_node)
                         node_stack.append(new_node)
 
-                    current_node = new_node
-
                 elif isinstance(md_element, MarkdownCommand):
                     # handle MarkdownCommand
                     __handle_markdown_command(md_element, current_node, node_stack)
-                    
-            current_node.add_parsed_cell(parsed_md)
+                
+                current_node = node_stack[-1]       # update current node 
+                                                    # (potentially manipulated through MD headers or commands)
+                current_node.add_parsed_cell(parsed_md)
+                accumulated_warnings.extend(parsed_md.warnings)
 
         elif cell.cell_type == 'code':
             # CODE CELL
@@ -81,9 +90,24 @@ def process_notebook(notebook_path, output_path, root_package='.'):
 
             parsed_code = parse_code_cell(cell.cell_idx, cell.raw_source, current_node)
             current_node.add_parsed_cell(parsed_code)
+        sleep(0.025)         # for aesthetic purposes 0:)
     
+    # update the tree to prune out ignored branches
+    print('Flushing...\n')
+    sleep(0.25)     # for aesthetic purposes 0:)
+    __flush_pruned_nodes(root)
+
     # write the parsed module tree
+    print('Writing modules...')
+    sleep(0.25)     # for aesthetic purposes 0:)
     write_modules(root, output_path)
+    print('Writing complete!')
+
+    # log warnings
+    print('\n--------------------')
+    print(f'Warnings: ({len(accumulated_warnings)})\n')
+    for warning in accumulated_warnings:
+        print(f'\t{warning["source"]} (Cell #{warning["cell_idx"]}): {warning["message"]}\n')
 
     return root
 
@@ -165,21 +189,26 @@ def __handle_markdown_command(command, current_node, node_stack):
                               depth=current_node.depth + 1)    # child-level
         new_node.node_type = 'package'
         current_node.add_child(new_node)
+        
         node_stack.append(new_node)
 
     elif command.type == MarkdownCommandType.DECLARE_MODULE:
         # create a new node and assert its node type to module
         node_name = __sanitize_node_name(command.value)
-        is_sibling = current_node.parent is not None    # default to sibling-level if not root level
-            
-        new_node = ModuleNode(node_name, current_node, 
-                              depth=current_node.depth + \
-                                (1 if is_sibling else 0))
+
+        new_node_parent = current_node
+
+        # default to sibling-level if we're not at root level
+        if current_node.parent is not None:    
+            node_stack.pop()
+            new_node_parent = current_node.parent
+
+        new_node = ModuleNode(node_name, new_node_parent, 
+                              depth=new_node_parent.depth + 1)
+        
         new_node.node_type = 'module'
-        if is_sibling:
-            current_node.parent.add_child(new_node)
-        else:
-            current_node.add_child(new_node)
+        new_node_parent.add_child(new_node)
+
         node_stack.append(new_node)
 
     elif command.type == MarkdownCommandType.DECLARE_NODE:
@@ -218,3 +247,19 @@ def __sanitize_node_name(node_name, default_name='unnamed'):
     node_name = node_name.strip('_')
 
     return node_name or default_name
+
+
+def __flush_pruned_nodes(node):
+    """
+    Recursively traverse the tree from the root to flush out 
+    ignored/pruned packages.
+
+    Args:
+        node (ModuleNode): the current node representing a module or package.
+    """
+
+    node.children = dict((k, v) for (k, v) in node.children.items() if not v.ignore_package and not v.ignore_module)
+
+    for _, child in node.children.items():
+        __flush_pruned_nodes(child)
+

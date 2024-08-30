@@ -30,14 +30,16 @@ class ParsedCodeCell(ParsedCell):
     
 
 class ParsedMarkdownCell(ParsedCell):
-    def __init__(self, elements):
+    def __init__(self, elements, warnings=[]):
         super(ParsedMarkdownCell, self).__init__()
         
         self.elements = elements    # a list of both MarkdownHeader and MarkdownCommand objects
+        self.warnings = warnings    # a list of dicts containing raised warnings/linting results
 
     def __str__(self):
         elements_str = ''.join(f'\n\t\t\t{el}' for el in self.elements)
-        return f'\n\tParsedMarkdownCell(\n\t\Directives: [{elements_str}]\n\t)'
+        warnings_str = ''.join(f'\n\t\t\t{w}' for w in self.warnings)
+        return f'\n\tParsedMarkdownCell(\n\t\Elements: [{elements_str}],\n\tWarnings: [{warnings_str}]\n\t)'
 
     def __repr__(self):
         return str(self)

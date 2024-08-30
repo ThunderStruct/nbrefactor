@@ -18,9 +18,14 @@ def read_notebook(notebook_path):
         list: a list of UnparsedCell objects containing both the
         code cells and markdown cells.
     """
+    try:
+        with open(notebook_path, 'r') as f:
+            nb = nbformat.read(f, as_version=4)
 
-    with open(notebook_path, 'r') as f:
-        nb = nbformat.read(f, as_version=4)
+    except:
+        print(f'Failed to open "{notebook_path}".')
+        print('Exiting...\n\n')
+        sys.exit()
 
     unparsed_cells = []
     for cell_idx, cell in enumerate(nb.cells):

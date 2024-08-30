@@ -52,13 +52,14 @@ def parse_markdown_cell(cell_idx, source):
     # For now, we'll just assess each line individually to extract headers/commands
     # comment_regex = re.compile(r'<!--(?P<comment>(?:(.|\n)*?))-->')
 
-    cmd_regex = re.compile(r'\$\b(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*?))(?=\s)')
+    cmd_regex = re.compile(r'\$\b(?P<command>\w+(?:-\w+)*)(?:=(?P<value>.*?))?(?=\s|$|[^\w])')
 
     md_elements = []        # both the Command + MarkdownHeader objects, in the order they appear in
                             # we don't simlpy match and extract commands/headers across the raw source
                             # to maintain the order of execution (in case multiple 
                             # headers/commands are present)
 
+    warnings = []
 
     # line by line parsing (to maintain sequential order)
     for line in md_str.split('\n'):
@@ -74,25 +75,20 @@ def parse_markdown_cell(cell_idx, source):
         #         # parse comment lines (we're allowing multiple commands 
         #         # in a single comment block)
 
-        cmd_match = cmd_regex.match(clean_line.strip())
+        cmd_match = cmd_regex.search(clean_line.strip())
 
-        print(clean_line.strip())
         if cmd_match:
-            print(cmd_match)
             cmd_str = cmd_match.group('command')
             value = cmd_match.group('value')
             
             try:
-                cmd = MarkdownCommand(cmd_str, value)   # will raise a value error if the cmd_str is invalid
+                cmd = MarkdownCommand(cmd_str, value)   # will raise a value error if the cmd_str is invalid 
+                                                        # or if an expected value-type is not found
                 md_elements.append(cmd)
-            except ValueError:
-                continue    # just ignore, 
-                            # no need to warn as MathJax commands also start with $
-                        
-                # print((
-                #     f'WARNING: An invalid command type `{cmd_str}` in'
-                #     f' Cell #{cell_idx} was found and ignored.'
-                # ))
+            except ValueError as e:
+                err = e.args[0]
+                err['cell_idx'] =  cell_idx               # attach cell index for logging
+                warnings.append(err)
                 
             continue
 
@@ -102,6 +98,6 @@ def parse_markdown_cell(cell_idx, source):
             md_header = clean_line.strip('#').strip()
             md_elements.append(MarkdownHeader(md_header, md_level))
 
-    return ParsedMarkdownCell(md_elements)
+    return ParsedMarkdownCell(md_elements, warnings)
 
 
