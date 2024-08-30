@@ -1,5 +1,4 @@
-"""
-
+"""The top-level module for refactoring
 """
 
 import re
@@ -16,12 +15,32 @@ from .parser import parse_code_cell, parse_markdown_cell
  
 
 def process_notebook(notebook_path, output_path, root_package='.'):
+    """
+    The Notebook-refactoring entry point. This function:
+
+        1. Reads the notebook into :class:`~datastructs/UnparsedCell` objects
+        2. Parses and processes the unparsed cells into :class:`~datastructs/ParsedMarkdownCell` \
+            and :class:`~datastructs/ParsedCodeCell` objects accordingly. \
+            This yields a tree of :class:`~datastructs/ModuleNode` objects representing the \
+            resulting file-structure.
+        3. Writes the packages and modules given the parsed :class:`~datastructs/ModuleNode` tree.
     
+    Args:
+        notebook_path (str): the full path to the Notebook file.
+        output_path (str): the desired output path for the refactored project.
+        root_package (str, optional): the root package for the refactored project (\
+            defaults to `'.'`; i.e. root level of the given `output_path`).
+    
+    Returns:
+        :class:`~datastructs/ModuleNode`: the root node of the generated tree structure.
+        
+    """
+
     # read notebook
-    print(f'Reading notebook at ({notebook_path})...')
+    print(f'Load notebook at ({notebook_path})...')
     sleep(0.25)     # for aesthetic purposes 0:)
     unparsed_cells = read_notebook(notebook_path)       # exits if file does not exist/is invalid
-    print(f'Reading complete!\n')
+    print(f'Loading complete!\n')
     
     # init the module tree
     root = ModuleNode(root_package)
