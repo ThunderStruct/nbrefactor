@@ -50,7 +50,7 @@ class MarkdownCommand(MarkdownElement):
                 'code': 1,
                 'type': 'Invalid Command',
                 'subject': cmd_str,
-                'message': f'An invalid command "{cmd_str}" was encountered'
+                'message': f'An invalid command "${cmd_str}" was encountered'
             })
         
         if value is not None:
@@ -67,7 +67,7 @@ class MarkdownCommand(MarkdownElement):
                     'code': 2,
                     'type': 'Invalid Value',
                     'subject': cmd_str,
-                    'message': f'A "{cmd_str}" command requires a value.'
+                    'message': f'The "${cmd_str}" command requires a value.'
                 })
 
             self.value = True   # defaults to True 
