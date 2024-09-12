@@ -4,6 +4,8 @@
     <img src="https://i.imgur.com/ukBP39X.png" alt="nbrefactor Logo" width="420">
 </p>
 
+<br />
+
 <div align="center">
 
  <a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a>
