@@ -1,19 +1,22 @@
 
 
-
-
 <p align="center">
     <img src="https://i.imgur.com/ukBP39X.png" alt="nbrefactor Logo" width="420">
 </p>
+
 <div align="center">
- <a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a> 
- <a href="https://pypi.org/project/nbrefactor/0.1.0/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.5-lightgrey.svg)</a> 
- <a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a> 
+
+ <a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a>
+ <a href="https://pypi.org/project/nbrefactor/0.1.0/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.5-lightgrey.svg)</a>
+ <a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a>
  <a href="https://nbrefactor.readthedocs.io/en/latest/">![Read the Docs](https://readthedocs.org/projects/nbrefactor/badge/?version=latest)</a>
+
 </div>
+
 <p align="center">
 An automation tool to refactor Jupyter Notebooks to Python packages and modules.
 </p>
+
 ------------------------
 
 
