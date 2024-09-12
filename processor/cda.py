@@ -224,7 +224,7 @@ def __remove_ipy_statements(source):
     # return magic_pruned
 
     # remove lines that start with % or ! with regex rather than ast transformer
-    magic_regex = re.compile(r'^(\s*)([!%].*)$', re.MULTILINE)
+    magic_regex = re.compile(r'^(\s*)([!%][^\s=][^\n]*)$', re.MULTILINE)
 
     # simply comment the statement out rather than remove it (felt wrong to just remove it)
     # we also account for indented blocks now 
