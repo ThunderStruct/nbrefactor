@@ -1,2 +1,0 @@
-pass # !python --version
-
