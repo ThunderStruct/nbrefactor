@@ -1,0 +1,40 @@
+""" CLI entry-point
+"""
+
+import os
+
+from .utils import Logger
+from .utils import parse_args
+from .fileops import compute_plot_path
+from .processor import process_notebook
+from .visualization import plot_module_tree
+
+
+def main():
+    # get arguments
+    args = parse_args()
+
+    # launch the refactoring
+    root_node = process_notebook(notebook_path=args.notebook_path, 
+                                 output_path=args.output_path, 
+                                 root_package=args.root_package)
+    
+    if args.generate_plot:
+        dag = plot_module_tree(root_node, args.plot_format)
+
+        plot_path = compute_plot_path(args.plot_path,
+                                      os.path.basename(args.notebook_path))
+        # render to file
+        dag.render(plot_path, cleanup=True)
+
+        Logger.log((
+            f'Module tree plot saved to "{plot_path}.{args.plot_format}"'
+        ), tag='\nSUCCESS', color=Logger.Color.GREEN)
+    
+    Logger.horizontal_separator(color=Logger.Color.GREEN)
+
+
+
+if __name__ == '__main__':
+    main()
+
