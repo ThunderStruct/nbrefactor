@@ -1,9 +1,9 @@
-from .numerical_optimization_benchmarks.rosenbrock import Rosenbrock
-from .numerical_optimization_benchmarks.sphere import Sphere
-from .helper_tools.logger import Logger
-from .helper_tools.operational_parameters import Params
 from .nas_components.nas_interface import NASInterface
+from .numerical_optimization_benchmarks.rosenbrock import Rosenbrock
 from .artificial_bee_colony_components.abc_optimizer import ArtificialBeeColony
+from .helper_tools.operational_parameters import Params
+from .helper_tools.logger import Logger
+from .numerical_optimization_benchmarks.sphere import Sphere
 """Top-level module used to run HiveNAS
 """
 

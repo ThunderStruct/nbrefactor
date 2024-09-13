@@ -1,5 +1,5 @@
-from tensorflow.keras.callbacks import Callback
 from matplotlib import plt as plt
+from tensorflow.keras.callbacks import Callback
 """Calculates a cutoff performance threshold, below which a model stops training
 """
 

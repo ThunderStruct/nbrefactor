@@ -1,17 +1,17 @@
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import SeparableConv2D
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Activation
+from .prompt_handler import PromptHandler
+from tensorflow.keras.layers import BatchNormalization
+import yaml
+from tensorflow.keras.layers import MaxPooling2D
+from .file_handler import FileHandler
+from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import SeparableConv2D
-from .prompt_handler import PromptHandler
-from tensorflow.keras.layers import MaxPooling2D
-import yaml
-from tensorflow.keras.layers import AveragePooling2D
-from .file_handler import FileHandler
-from tensorflow.keras.layers import Flatten
 import os
-from tensorflow.keras.layers import Activation
-from tensorflow.keras.layers import BatchNormalization
 from functools import partial
-from tensorflow.keras.layers import Conv2D
 """All operational parameters used by HiveNAS and configuration methods
 """
 

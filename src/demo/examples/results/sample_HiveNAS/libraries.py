@@ -1,10 +1,10 @@
-import humanize
-import sys
 from google.colab import drive
-from tensorflow.test import gpu_device_name
 import os
-import psutil
+from tensorflow.test import gpu_device_name
+import humanize
 import GPUtil as GPU
+import psutil
+import sys
 pass # !ln -sf /opt/bin/nvidia-smi /usr/bin/nvidia-smi
 pass # !pip install gputil
 pass # !pip install psutil

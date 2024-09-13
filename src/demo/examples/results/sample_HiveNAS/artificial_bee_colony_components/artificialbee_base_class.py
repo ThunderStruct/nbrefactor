@@ -1,7 +1,7 @@
-from abc import ABC
 from abc import abstractmethod
-from ..objective_interface import ObjectiveInterface
 from .foodsource import FoodSource
+from abc import ABC
+from ..objective_interface import ObjectiveInterface
 """Abstract definitions of the
 :class:`~core.abc.employee_bee.EmployeeBee` and
 :class:`~core.abc.onlooker_bee.OnlookerBee` methods

@@ -1,5 +1,5 @@
-from .numericalbenchmark_base_class import NumericalBenchmark
 from scipy import optimize
+from .numericalbenchmark_base_class import NumericalBenchmark
 """Rosenbrock optimization benchmark
 """
 

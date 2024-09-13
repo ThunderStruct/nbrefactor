@@ -9,6 +9,7 @@ from .fileops import compute_plot_path
 from .processor import process_notebook
 from .visualization import plot_module_tree
 
+# from .visualization.plot_module_tree import plot_module_tree_nx
 
 def main():
     # get arguments
@@ -21,6 +22,7 @@ def main():
     
     if args.generate_plot:
         dag = plot_module_tree(root_node, args.plot_format)
+        # plot_module_tree_nx(root_node, './plots/nx_plot.pdf')
 
         plot_path = compute_plot_path(args.plot_path,
                                       os.path.basename(args.notebook_path))

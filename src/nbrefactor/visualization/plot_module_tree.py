@@ -1,7 +1,10 @@
 """ Visualization methods for refactored notebooks
 """
 
+import networkx as nx
 from graphviz import Digraph
+import matplotlib.pyplot as plt
+from networkx.drawing.nx_agraph import graphviz_layout
 
 def plot_module_tree(root_node, format='pdf'):
     """
@@ -26,13 +29,13 @@ def plot_module_tree(root_node, format='pdf'):
 
         if parent_name:
             # create an edge from the parent to this node
-            graph.edge(parent_name, node_name)
+            graph.edge(parent_name, node_name, minlen='2')
 
         # recursive calls to all child `~ModuleNode` nodes
         for child in node.children.values():
             add_nodes_edges(graph, child, node_name)
 
-    dag = Digraph(comment='ModuleNode Tree')
+    dag = Digraph(comment='ModuleNode Tree', graph_attr={'splines': 'polyline', 'rankdir': 'TB', 'nodesep': '0.5'})
     
     # recursively add the tree nodes to the DAG
     add_nodes_edges(dag, root_node)
@@ -40,3 +43,44 @@ def plot_module_tree(root_node, format='pdf'):
     dag.format = format
     
     return dag
+
+
+# def plot_module_tree_nx(root_node, output_path):
+#     """
+#     Visualize the :class:`~ModuleNode` tree structure using NetworkX and \
+#     Graphviz layout for matplotlib plotting.
+
+#     Args:
+#         root_node (:class:`~ModuleNode`): the root node of the tree to \
+#             visualize.
+    
+#     Returns:
+#         None: The plot is displayed with matplotlib.
+#     """
+
+#     def truncate_name(name, max_length=50):
+#         if len(name) <= max_length:
+#             return name
+#         half_length = (max_length - 3) // 2
+#         return f'{name[:half_length]}...{name[-half_length:]}'
+    
+#     def add_edges_to_graph(graph, node):
+#         node_name = f'{node.name}'
+
+#         node_name = truncate_name(node_name)
+
+#         for child in node.children.values():
+#             child_name = truncate_name(f'{child.name}')
+#             graph.add_edge(node_name, child_name)
+#             add_edges_to_graph(graph, child)
+
+#     dag = nx.DiGraph()
+#     add_edges_to_graph(dag, root_node)
+#     pos = graphviz_layout(dag, prog='dot')
+
+#     plt.figure(figsize=(18, 8))
+
+#     nx.draw(dag, pos, with_labels=True, node_size=3000, node_shape='$\u25AC$',
+#             node_color='none', font_size=10, edge_color='gray')
+    
+#     plt.savefig(output_path)

@@ -1,15 +1,15 @@
-from .numerical_optimization_benchmarks.sphere import Sphere
-from google.colab import files
-from .helper_tools.operational_parameters import Params
-import requests
 from .helper_tools.file_handler import FileHandler
-from .artificial_bee_colony_components.abc_optimizer import ArtificialBeeColony
+from .helper_tools.operational_parameters import Params
+from google.colab import files
+from .numerical_optimization_benchmarks.sphere import Sphere
 from matplotlib import plt as plt
-import gc
-from .helper_tools.logger import Logger
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import os
+from .artificial_bee_colony_components.abc_optimizer import ArtificialBeeColony
+import requests
+from .helper_tools.logger import Logger
 from .helper_tools.image_augmentations import ImgAug
+import gc
+import os
 def delete_all():
     '''
         ***DESTRUCTIVE ACTION***

@@ -1,12 +1,12 @@
-from ..helper_tools.file_handler import FileHandler
-from .nas_search_space import NASSearchSpace
-from ..helper_tools.operational_parameters import Params
-import gc
-from ..objective_interface import ObjectiveInterface
-import pandas as pd
-import os
-from .nas_evaluation_strategy import NASEval
 from tensorflow.keras import K as K
+from .nas_search_space import NASSearchSpace
+from .nas_evaluation_strategy import NASEval
+from ..helper_tools.operational_parameters import Params
+import pandas as pd
+from ..helper_tools.file_handler import FileHandler
+import gc
+import os
+from ..objective_interface import ObjectiveInterface
 """The NAS Interface encapsulating the Evaluation Strategy and Search Space
 """
 

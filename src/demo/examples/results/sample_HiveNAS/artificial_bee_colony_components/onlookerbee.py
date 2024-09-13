@@ -1,8 +1,8 @@
-from ..helper_tools.logger import Logger
-from .artificialbee_base_class import ArtificialBee
-import pandas as pd
 from .foodsource import FoodSource
 import time
+from .artificialbee_base_class import ArtificialBee
+from ..helper_tools.logger import Logger
+import pandas as pd
 """Onlooker Bees' class responsible for the exploitation phase of the
 Artificial Bee Colony optimization
 """

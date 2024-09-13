@@ -1,7 +1,7 @@
-import numpy as np
-from .operational_parameters import Params
 from tensorflow.image import random_saturation
+from .operational_parameters import Params
 from tensorflow.image import random_contrast
+import numpy as np
 """Image Augmentation methods
 """
 

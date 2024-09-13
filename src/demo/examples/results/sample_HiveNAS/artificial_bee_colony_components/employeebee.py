@@ -1,10 +1,10 @@
-from ..helper_tools.logger import Logger
-import numpy as np
-from .artificialbee_base_class import ArtificialBee
-import pandas as pd
 from copy import deepcopy
 from ..helper_tools.operational_parameters import Params
 import time
+from .artificialbee_base_class import ArtificialBee
+from ..helper_tools.logger import Logger
+import pandas as pd
+import numpy as np
 """Employee Bees' class responsible for the exploration phase of the
 Artificial Bee Colony optimization
 """

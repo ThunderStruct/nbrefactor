@@ -1,13 +1,13 @@
-from ..helper_tools.file_handler import FileHandler
-from ..helper_tools.operational_parameters import Params
 import time
-from .onlookerbee import OnlookerBee
 from ..helper_tools.logger import Logger
+import numpy as np
+from ..helper_tools.file_handler import FileHandler
+from .employeebee import EmployeeBee
+from ..helper_tools.operational_parameters import Params
+from .onlookerbee import OnlookerBee
+from .scoutbee import ScoutBee
 import pandas as pd
 import os
-from .employeebee import EmployeeBee
-import numpy as np
-from .scoutbee import ScoutBee
 """The main Artificial Bee Colony optimization algorithm
 """
 

@@ -1,7 +1,7 @@
-import os
-from ipywidgets import widgets
-from IPython.display import display
 from IPython.display import clear_output
+from ipywidgets import widgets
+import os
+from IPython.display import display
 """User prompts-handler
 """
 

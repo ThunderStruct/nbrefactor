@@ -1,21 +1,21 @@
-from ...helper_tools.image_augmentations import ImgAug
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Dense
-from ...helper_tools.file_handler import FileHandler
-from ...helper_tools.operational_parameters import Params
-import hashlib
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import os
-import numpy as np
-from tensorflow.keras.models import load_model
-from tensorflow.keras import K as K
-from tensorflow.keras.datasets import cifar10
-from tensorflow.keras.layers import Input
-from tensorflow.keras.layers import Add
 from tensorflow.keras.datasets import fashion_mnist
-import gc
+from tensorflow.keras.models import Model
+from tensorflow.keras.datasets import cifar10
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import hashlib
+from ...helper_tools.file_handler import FileHandler
+from tensorflow.keras.layers import Input
+import os
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
+from tensorflow.keras import K as K
+from tensorflow.keras.models import load_model
+import gc
+from ...helper_tools.image_augmentations import ImgAug
+import numpy as np
+from ...helper_tools.operational_parameters import Params
+from tensorflow.keras.layers import Dense
 """The Evaluation Strategy phase of the NAS framework
 """
 
