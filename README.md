@@ -67,7 +67,7 @@ pip install nbrefactor
 
 ## Manual Installation
 
-Simply clone the entire repo and extract the files in the `nbrefactor` folder,
+Simply clone the repo and extract the files in the `nbrefactor` folder,
 then run:
 
 ```sh
@@ -104,19 +104,68 @@ Or use one of the scripts below:
 
 # Usage
 
-Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for the comprehensive commands' reference. Some common usages are provided below.
+Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for the comprehensive commands' reference. Some basic usages are provided below.
 
 ## Command Line Interface
 
-<!-- sample CLI usage -->
+`nbrefactor` provides a CLI to easily refactor notebooks into a structured project hierarchy.
+
+### Basic CLI Usage
+
+To use the CLI, run the following command:
+
+```sh
+jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
+```
+
+- `<notebook_path>`: Path to the Jupyter notebook file you want to refactor.
+- `<output_path>`: Directory where the refactored Python modules will be saved.
+
+### Options
+
+- `--root-package <package_name>`: (Optional) Name of the root package. Defaults to `"."`.
+
+  Example:
+
+  ```bash
+  jupyter nbrefactor notebook.ipynb output_dir --root-package my_package
+  ```
+
+- `--generate-plot`: (Optional) Generates a visual representation of the module hierarchy as a dependency graph.
+
+  Example:
+
+  ```bash
+  jupyter nbrefactor notebook.ipynb output_dir --generate-plot
+  ```
+
+### Example
+
+Convert a Jupyter notebook into Python modules and generate a plot of the module hierarchy:
+
+```bash
+jupyter nbrefactor my_notebook.ipynb ./output --root-package my_package --generate-plot
+```
+
+This will:
+
+1. Refactor `my_notebook.ipynb` into structured Python modules.
+2. Place the output in the `./output` directory.
+3. Set the root package as `my_package`.
+4. Generate a plot of the module dependency tree and save it as `module_tree.png` in the output directory.
 
 ## Demo
 
-<!-- describe each provided sample ipynb -->
+There are several example notebooks provided to showcase **nbrefactor**'s capabilities.
+
+- [_Primary Demo Notebook_](src/demo/examples/sample_primary_demo.ipynb): this notebook contains several examples of the core nbrefactor features, including all Markdown commands.
+- [_CS231n Notebook_](src/demo/examples/sample_CS231n_colab.ipynb): the official CS231n Colab notebook.
+- [_HiveNAS Notebook_](src/demo/examples/sample_HiveNAS.ipynb): a larger project with a more complex folder structure.
+- [_Markdown-only Notebook_](src/demo/examples/sample_markdown_only.ipynb): a Markdown-only notebook to illustrate the directory-refactoring abilities of nbrefactor.
 
 ### Interactive Demo
 
-<!-- link to the interactive run demo -->
+An interactive Notebook-based demo can be found [here](src/demo/demo.ipynb), which can be used to run the example projects discussed above.
 
 # Todo
 
