@@ -61,7 +61,7 @@ The Python package is hosted on the [Python Package Index (PyPI)](https://pypi.o
 
 The latest published version of **nbrefactor** can be installed using
 
-```sh
+```bash
 pip install nbrefactor
 ```
 
@@ -70,7 +70,7 @@ pip install nbrefactor
 Simply clone the repo and extract the files in the `nbrefactor` folder,
 then run:
 
-```sh
+```bash
 pip install -r requirements.txt
 pip install -e .
 ```
@@ -81,7 +81,7 @@ Or use one of the scripts below:
 
 - `cd` into your project directory
 - Use `sparse-checkout` to pull the library files only into your project directory
-  ```sh
+  ```bash
   git init nbrefactor
   cd nbrefactor
   git remote add -f origin https://github.com/ThunderStruct/nbrefactor.git
@@ -96,7 +96,7 @@ Or use one of the scripts below:
 
 - `cd` into your project directory
 - `checkout` the library files
-  ```sh
+  ```bash
   svn checkout https://github.com/ThunderStruct/nbrefactor/trunk/nbrefactor
   pip install -r requirements.txt
   pip install -e .
@@ -114,7 +114,7 @@ Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for t
 
 To use the CLI, run the following command:
 
-```sh
+```bash
 jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 ```
 
