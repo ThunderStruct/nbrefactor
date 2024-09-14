@@ -123,36 +123,13 @@ jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 
 ### Options
 
-- `--root-package <package_name>`: (Optional) Name of the root package. Defaults to `"."`.
-
-  Example:
-
-  ```bash
-  jupyter nbrefactor notebook.ipynb output_dir --root-package my_package
-  ```
-
-- `--generate-plot`: (Optional) Generates a visual representation of the module hierarchy as a dependency graph.
-
-  Example:
-
-  ```bash
-  jupyter nbrefactor notebook.ipynb output_dir --generate-plot
-  ```
-
-### Example
-
-Convert a Jupyter notebook into Python modules and generate a plot of the module hierarchy:
-
-```bash
-jupyter nbrefactor my_notebook.ipynb ./output --root-package my_package --generate-plot
-```
-
-This will:
-
-1. Refactor `my_notebook.ipynb` into structured Python modules.
-2. Place the output in the `./output` directory.
-3. Set the root package as `my_package`.
-4. Generate a plot of the module dependency tree and save it as `module_tree.png` in the output directory.
+| Argument                 | Type | Description                                                          | Default    |
+| ------------------------ | ---- | -------------------------------------------------------------------- | ---------- |
+| `notebook_path`          | str  | Path to the Jupyter Notebook file to be refactored.                  | (Required) |
+| `output_path`            | str  | Path to the output directory where refactored modules will be saved. | (Required) |
+| `-rp`, `--root-package`  | str  | Name of the root package. Defaults to the current directory `"."`.   | `"."`      |
+| `-gp`, `--generate-plot` | flag | Plots a dendrogram of the refactored project structure.              | `False`    |
+| `-pf`, `--plot-format`   | str  | Format of the generated plot (e.g., `"pdf"`, `"png"`).               | `"pdf"`    |
 
 ## Demo
 
