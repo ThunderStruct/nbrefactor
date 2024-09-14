@@ -39,7 +39,7 @@ For instance, if a class is refactored to a generated module `./package/sub_pack
 
 Convert markdown headers in notebooks into a corresponding folder and file structure.
 
-[refactoring_examples](https://i.imgur.com/bBgHJay.png)
+![refactoring_examples](https://i.imgur.com/bBgHJay.png)
 
 ## Code Dependency Analyzer (CDA)
 
