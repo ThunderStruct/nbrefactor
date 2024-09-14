@@ -1,12 +1,12 @@
 """ Visualization methods for refactored notebooks
 """
 
-import networkx as nx
+# import networkx as nx
 from graphviz import Digraph
-import matplotlib.pyplot as plt
-from networkx.drawing.nx_agraph import graphviz_layout
+# import matplotlib.pyplot as plt
+# from networkx.drawing.nx_agraph import graphviz_layout
 
-def plot_module_tree(root_node, format='pdf'):
+def plot_module_tree(root_node, format='pdf', ):
     """
     Visualize the :class:`~ModuleNode` tree structure and save it as a PDF.
 
@@ -23,7 +23,8 @@ def plot_module_tree(root_node, format='pdf'):
     """
 
     def add_nodes_edges(graph, node, parent_name=None):
-        node_name = f'{id(node)}_{node.name}'   # unique node name
+        node_name = f'{id(node)}_{node.name}'   # using id() to ensure
+                                                # node-name uniqueness
 
         graph.node(node_name, node.name)
 
@@ -35,7 +36,10 @@ def plot_module_tree(root_node, format='pdf'):
         for child in node.children.values():
             add_nodes_edges(graph, child, node_name)
 
-    dag = Digraph(comment='ModuleNode Tree', graph_attr={'splines': 'polyline', 'rankdir': 'TB', 'nodesep': '0.5'})
+    dag = Digraph(comment='ModuleNodeTree', 
+                  graph_attr={'splines': 'splines',
+                              'rankdir': 'TB', 
+                              'nodesep': '0.5'})
     
     # recursively add the tree nodes to the DAG
     add_nodes_edges(dag, root_node)
@@ -45,17 +49,23 @@ def plot_module_tree(root_node, format='pdf'):
     return dag
 
 
+
+# TODO: Needs improvements. It has to look much better to justify the
+# dependency clutter. Could potentially also explore an igraph + plotly 
+# approach to get that *hierarchical directory tree* look; refer to
+# (https://plotly.com/python/tree-plots/)
+
 # def plot_module_tree_nx(root_node, output_path):
 #     """
-#     Visualize the :class:`~ModuleNode` tree structure using NetworkX and \
-#     Graphviz layout for matplotlib plotting.
+#     Alternative visualization method to draw the :class:`~ModuleNode` tree \
+#     structure using NetworkX, Graphviz layout, and plt.
 
 #     Args:
 #         root_node (:class:`~ModuleNode`): the root node of the tree to \
-#             visualize.
+#            visualize.
     
 #     Returns:
-#         None: The plot is displayed with matplotlib.
+#         None: the plot is displayed with matplotlib.
 #     """
 
 #     def truncate_name(name, max_length=50):
@@ -84,3 +94,4 @@ def plot_module_tree(root_node, format='pdf'):
 #             node_color='none', font_size=10, edge_color='gray')
     
 #     plt.savefig(output_path)
+
