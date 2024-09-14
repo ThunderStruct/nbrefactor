@@ -121,7 +121,7 @@ jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 - `<notebook_path>`: Path to the Jupyter notebook file you want to refactor.
 - `<output_path>`: Directory where the refactored Python modules will be saved.
 
-### Options
+### CLI Arguments
 
 | Argument                 | Type | Description                                                          | Default    |
 | ------------------------ | ---- | -------------------------------------------------------------------- | ---------- |
@@ -144,18 +144,10 @@ There are several example notebooks provided to showcase **nbrefactor**'s capabi
 
 An interactive Notebook-based demo can be found [here](src/demo/demo.ipynb), which can be used to run the example projects discussed above.
 
-# Todo
-
-- [ ] Handle custom Markdown commands to override the module tree structure.
-- [ ] Fix attribute name definitions conflicting with globally tracked identifiers (refer to `sample_HiveNAS.ipynb` -> `foodsource.py`'s `time` property conflicting with the `time` package, leading to an improper `import time` dependency).
-- [ ] Reimplement the Processor logic to a 2-pass approach to infer the module tree structure and node types, _then_ analyze the usages/dependencies (the CDA bit). This is to overcome the current hacky relative-imports' solution for package-level modules (refer to [./fileops/writer.py:\_\_write_module_node()](https://github.com/ThunderStruct/nbrefactor/blob/7dfbf751d9b05e99fc5aedf6e3b729bf7299b0c8/fileops/writer.py#L38) for the full description).
-- [ ] Add a feature to use the CDA to exclude non-functional modules (i.e. all comments or `pass` statements. Those could be resulting from a notebook cell that exclusively contain magic commands (which get replaced by `pass # \1`), yielding an essentially empty file).
-- [ ] Update the CDA to handle global (cell-level) variable tracking and injection (we currently only track functions' and classes' definitions). The most elegant approach I could think of at the moment that does not involve `globals()` is to create a root-level module `global_vars.py` or so and accumulate all definitions there.
-
 # License
 
 **nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 # Contributing
 
-PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines.
+PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines. The [TODO](TODO.md) list delineates some potential future implementations and improvements.
