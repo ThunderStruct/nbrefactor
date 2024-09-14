@@ -41,7 +41,6 @@ Convert markdown headers in notebooks into a corresponding folder and file struc
 
 ![refactoring_examples](https://i.imgur.com/bBgHJay.png)
 
-
 ## Code Dependency Analyzer (CDA)
 
 The core of **nbrefactor**'s functionality lies in the Code Dependency Analyzer (CDA). The CDA is responsible for parsing code cells, tracking declared definitions, and analyzing dependencies across the generated modules. This module tackles challenges that were raised during the inception of the refactoring-automation process (primarily handling relative imports dynamically as we generate the modules, identifier shadowing, and non-redundant dependency injection).
@@ -67,7 +66,8 @@ pip install nbrefactor
 ```
 
 ## Manual Installation
-Simply clone the entire repo and extract the files in the `nbrefactor` folder, 
+
+Simply clone the entire repo and extract the files in the `nbrefactor` folder,
 then run:
 
 ```sh
@@ -78,25 +78,29 @@ pip install -e .
 Or use one of the scripts below:
 
 ### GIT
-  - `cd` into your project directory
-  - Use `sparse-checkout` to pull the library files only into your project directory
-    ```sh
-    git init nbrefactor
-    cd nbrefactor
-    git remote add -f origin https://github.com/ThunderStruct/nbrefactor.git
-    git config core.sparseCheckout true
-    echo "nbrefactor/*" >> .git/info/sparse-checkout
-    git pull --depth=1 origin master
-    ```
-   - Import the newly pulled files into your project folder
+
+- `cd` into your project directory
+- Use `sparse-checkout` to pull the library files only into your project directory
+  ```sh
+  git init nbrefactor
+  cd nbrefactor
+  git remote add -f origin https://github.com/ThunderStruct/nbrefactor.git
+  git config core.sparseCheckout true
+  echo "nbrefactor/*" >> .git/info/sparse-checkout
+  git pull --depth=1 origin master
+  pip install -r requirements.txt
+  pip install -e .
+  ```
 
 ### SVN
-  - `cd` into your project directory
-  - `checkout` the library files
-    ```sh
-    svn checkout https://github.com/ThunderStruct/nbrefactor/trunk/nbrefactor
-    ```
-  - Import the newly checked out files into your project folder
+
+- `cd` into your project directory
+- `checkout` the library files
+  ```sh
+  svn checkout https://github.com/ThunderStruct/nbrefactor/trunk/nbrefactor
+  pip install -r requirements.txt
+  pip install -e .
+  ```
 
 # Usage
 
