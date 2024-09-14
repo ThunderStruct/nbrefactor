@@ -1,5 +1,3 @@
-
-
 <p align="center">
     <img src="https://i.imgur.com/ukBP39X.png" alt="nbrefactor Logo" width="420">
 </p>
@@ -8,10 +6,10 @@
 
 <div align="center">
 
- <a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a>
- <a href="https://pypi.org/project/nbrefactor/0.1.0/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.5-lightgrey.svg)</a>
- <a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a>
- <a href="https://nbrefactor.readthedocs.io/en/latest/">![Read the Docs](https://readthedocs.org/projects/nbrefactor/badge/?version=latest)</a>
+<a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a>
+<a href="https://pypi.org/project/nbrefactor/0.1.0/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.5-lightgrey.svg)</a>
+<a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a>
+<a href="https://nbrefactor.readthedocs.io/en/latest/">![Read the Docs](https://readthedocs.org/projects/nbrefactor/badge/?version=latest)</a>
 
 </div>
 
@@ -19,8 +17,7 @@
 An automation tool to refactor Jupyter Notebooks to Python packages and modules.
 </p>
 
-------------------------
-
+---
 
 # Overview (The "What")
 
@@ -32,17 +29,17 @@ With the growing dependence on cloud-based IPython platforms ([Google Colab](htt
 
 # Approach (The "How")
 
-This project does *not* just create a hierarchy based on the level of Markdown headers (how many `#` there are); this is just a single step in the refactoring process.
+This project does _not_ just create a hierarchy based on the level of Markdown headers (how many `#` there are); this is just a single step in the refactoring process.
 
-Since we are generating modules that potentially depend on context from previous cells in the notebook, dependency-analysis is required. Furthermore, we also need track the generated modules and all globally-accessible identifiers throughout the notebook to generate relative import statements as needed. 
+Since we are generating modules that potentially depend on context from previous cells in the notebook, dependency-analysis is required. Furthermore, we also need track the generated modules and all globally-accessible identifiers throughout the notebook to generate relative import statements as needed.
 
 For instance, if a class is refactored to a generated module `./package/sub_package/module.py`, this definition and module path need to be tracked so we can relatively import it as needed if it appears in successive cells or modules. _Scope-Awareness_ and _Identifier-Shadowing_ posed a challenge as well, and are also handled in the dependency analysis phase of the refactoring.
 
 ## Module Hierarchy Generation
 
 Convert markdown headers in notebooks into a corresponding folder and file structure.
-<!-- finalize the example file and add an image here for a side-by-side comparison (before and after sort of thing) -->
 
+[refactoring_examples](https://i.imgur.com/bBgHJay.png)
 
 ## Code Dependency Analyzer (CDA)
 
@@ -56,13 +53,11 @@ The core of **nbrefactor**'s functionality lies in the Code Dependency Analyzer 
 6. **Dynamic Relative Import Resolution**: resolve local import statements dynamically depending on the current and target modules' positions in the tree.
 7. **Dependency Generation and Resolution**: generate the respective import statements (given the definitions' analysis in step 5 & 6) to be injected during the file-writing phase.
 
-
 # Installation
 
 ## PyPI (recommended)
 
 ## SVN Checkout
-
 
 # Usage
 
@@ -82,13 +77,11 @@ Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for t
 
 # Todo
 
-
- - [ ] Handle custom Markdown commands to override the module tree structure.
- - [ ] Fix attribute name definitions conflicting with globally tracked identifiers (refer to `sample_HiveNAS.ipynb` -> `foodsource.py`'s `time` property conflicting with the `time` package, leading to an improper `import time` dependency).
- - [ ] Reimplement the Processor logic to a 2-pass approach to infer the module tree structure and node types, *then* analyze the usages/dependencies (the CDA bit). This is to overcome the current hacky relative-imports' solution for package-level modules (refer to [./fileops/writer.py:__write_module_node()](https://github.com/ThunderStruct/nbrefactor/blob/7dfbf751d9b05e99fc5aedf6e3b729bf7299b0c8/fileops/writer.py#L38) for the full description).
- - [ ] Add a feature to use the CDA to exclude non-functional modules (i.e. all comments or `pass` statements. Those could be resulting from a notebook cell that exclusively contain magic commands (which get replaced by `pass # \1`), yielding an essentially empty file).
- - [ ] Update the CDA to handle global (cell-level) variable tracking and injection (we currently only track functions' and classes' definitions). The most elegant approach I could think of at the moment that does not involve `globals()` is to create a root-level module `global_vars.py` or so and accumulate all definitions there.
- 
+- [ ] Handle custom Markdown commands to override the module tree structure.
+- [ ] Fix attribute name definitions conflicting with globally tracked identifiers (refer to `sample_HiveNAS.ipynb` -> `foodsource.py`'s `time` property conflicting with the `time` package, leading to an improper `import time` dependency).
+- [ ] Reimplement the Processor logic to a 2-pass approach to infer the module tree structure and node types, _then_ analyze the usages/dependencies (the CDA bit). This is to overcome the current hacky relative-imports' solution for package-level modules (refer to [./fileops/writer.py:\_\_write_module_node()](https://github.com/ThunderStruct/nbrefactor/blob/7dfbf751d9b05e99fc5aedf6e3b729bf7299b0c8/fileops/writer.py#L38) for the full description).
+- [ ] Add a feature to use the CDA to exclude non-functional modules (i.e. all comments or `pass` statements. Those could be resulting from a notebook cell that exclusively contain magic commands (which get replaced by `pass # \1`), yielding an essentially empty file).
+- [ ] Update the CDA to handle global (cell-level) variable tracking and injection (we currently only track functions' and classes' definitions). The most elegant approach I could think of at the moment that does not involve `globals()` is to create a root-level module `global_vars.py` or so and accumulate all definitions there.
 
 # License
 
@@ -97,5 +90,3 @@ Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for t
 # Contributing
 
 PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines.
-
-
