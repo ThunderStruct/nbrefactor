@@ -1,0 +1,67 @@
+{%- set pkgname_map = {
+   'cli': 'Command Line Interface',
+   'utils': 'Utilities',
+   'fileops': 'File Operations',
+   'datastructs': 'Data Structures'
+} -%}
+
+{%- set PROJECTNAME = 'nbrefactor' -%}
+
+{%- macro automodule(modname, options) -%}
+.. automodule:: {{ modname }}
+{%- for option in options %}
+   :{{ option }}:
+{%- endfor %}
+{%- endmacro %}
+
+{%- macro toctree(docnames) -%}
+.. toctree::
+   :maxdepth: {{ maxdepth }}
+{% for docname in docnames %}
+   {{ docname }}
+{%- endfor %}
+{%- endmacro %}
+
+{%- macro packagename(pname) -%}
+{%- set splitname = pkgname.split('.')[-1] -%}
+{%- set capname = [splitname[0] | upper, splitname[1:]] | join("") -%}
+{%- if capname in pkgname_map -%}
+{%- set capname = pkgname_map[capname] -%}
+{% endif %}
+{{ [capname, "Package"] | join(" ") }}
+{%- endmacro -%}
+
+{%- if is_namespace %}
+{{- [pkgname, "namespace"] | join(" ") | e | heading }}
+{% else %}
+{{- packagename(pkgname) | e | heading }}
+{{ ['(*', PROJECTNAME, '.', pkgname, '*)'] | join("") }}
+{% endif %}
+
+{%- if is_namespace %}
+.. py:module:: {{ pkgname }}
+{% endif %}
+
+{%- if modulefirst and not is_namespace %}
+{{ automodule(pkgname, automodule_options) }}
+{% endif %}
+
+{%- if subpackages %}
+
+{{ toctree(subpackages) }}
+{% endif %}
+
+{%- if submodules %}
+
+{% if separatemodules %}
+{{ toctree(submodules) }}
+{% else %}
+{%- for submodule in submodules %}
+{% if show_headings %}
+{{- submodule | e | heading(2) }}
+{% endif %}
+{{ automodule(submodule, automodule_options) }}
+{% endfor %}
+{%- endif %}
+{%- endif %}
+

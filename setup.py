@@ -8,7 +8,7 @@ setuptools.setup(
     version='0.1.0',
     author='Mohamed Shahawy',
     author_email='envious-citizen.0s@icloud.com',
-    description='A tool for refactoring Jupyter Notebooks into structured Python modules',
+    description='An automation tool to refactor Jupyter Notebooks to Python modules, with code dependency analysis.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/ThunderStruct/nbrefactor',

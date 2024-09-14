@@ -1,0 +1,25 @@
+{%- set modulename_map = {
+} -%}
+
+{%- set PROJECTNAME = 'nbrefactor' -%}
+
+{%- macro modulename(mname) -%}
+{%- set splitname = mname.split('.')[-1] -%}
+{%- set capname = ' '.join(splitname.split('_')).title() -%}
+{%- if capname in modulename_map -%}
+{%- set capname = modulename_map[capname] -%}
+{% endif %}
+{{ capname }}
+{%- endmacro -%}
+
+
+{%- if show_headings %}
+{{- modulename(basename) | e | heading }}
+{{ ['(*', basename, '*)'] | join("") }}
+
+{% endif -%}
+.. automodule:: {{ qualname }}
+{%- for option in automodule_options %}
+   :{{ option }}:
+{%- endfor %}
+
