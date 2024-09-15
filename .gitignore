@@ -135,3 +135,6 @@ dmypy.json
 
 # Generated results
 src/demo/examples/*/
+
+# Bump My Version
+.bumpversion.cfg
