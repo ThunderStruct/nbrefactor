@@ -20,16 +20,16 @@ search = "pypi%20package-{current_version}-lightgrey"
 replace = "pypi%20package-{new_version}-lightgrey"
 
 [[tool.bumpversion.files]]
-path = "./docs/source/conf.py"
+path = "docs/source/conf.py"
 search = 'release = "{current_version}"'
 replace = 'release = "{new_version}"'
 
 [[tool.bumpversion.files]]
-path = "./docs/source/conf.py"
+path = "docs/source/conf.py"
 search = 'version = "{current_version}"'
 replace = 'version = "{new_version}"'
 
 [[tool.bumpversion.files]]
-path = "./src/nbrefactor/__init__.py"
+path = "src/nbrefactor/__init__.py"
 search = '__version__ = "{current_version}"'
 replace = '__version__ = "{new_version}"'
