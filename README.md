@@ -148,6 +148,21 @@ An interactive Notebook-based demo can be found [here](src/demo/demo.ipynb), whi
 
 **nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
+# Change Log
+
+Consult the [CHANGELOG](CHANGELOG.md) for the latest updates.
+
 # Contributing
 
-PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines. The [TODO](TODO.md) list delineates some potential future implementations and improvements.
+PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines. 
+
+The [TODO](TODO.md) list delineates some potential future implementations and improvements. 
+
+## PR Submission
+
+In addition to following the [contribution guidelines](CONTRIBUTING.md), please ensure the following steps are adhered to prior to submitting a PR:
+
+- The [CHANGELOG](CHANGELOG.md) is updated according to the given structure
+- The [README](README.md) and [TODO](TODO.md) are updated (if applicable)
+
+---
