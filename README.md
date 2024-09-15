@@ -144,10 +144,6 @@ There are several example notebooks provided to showcase **nbrefactor**'s capabi
 
 An interactive Notebook-based demo can be found [here](src/demo/demo.ipynb), which can be used to run the example projects discussed above.
 
-# License
-
-**nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
 # Change Log
 
 Consult the [CHANGELOG](CHANGELOG.md) for the latest updates.
@@ -164,5 +160,9 @@ In addition to following the [contribution guidelines](CONTRIBUTING.md), please 
 
 - The [CHANGELOG](CHANGELOG.md) is updated according to the given structure
 - The [README](README.md) and [TODO](TODO.md) are updated (if applicable)
+
+# License
+
+**nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
