@@ -17,14 +17,17 @@ def process_notebook(notebook_path, output_path,
     """
     The Notebook-refactoring entry point. This function:
 
-        1. Reads the notebook into :class:`~datastructs/UnparsedCell` objects
+        1. Reads the notebook into \
+            :class:`~nbrefactor.datastructs.UnparsedCell` objects
         2. Parses and processes the unparsed cells into \
-            :class:`~datastructs/ParsedMarkdownCell` and \
-                :class:`~datastructs/ParsedCodeCell` objects accordingly. \
-            This yields a tree of :class:`~datastructs/ModuleNode` objects \
+            :class:`~nbrefactor.datastructs.ParsedMarkdownCell` and \
+                :class:`~nbrefactor.datastructs.ParsedCodeCell` objects \
+                    accordingly. \
+            This yields a tree of \
+                :class:`~nbrefactor.datastructs.ModuleNode` objects \
                 representing the resulting file-structure.
         3. Writes the packages and modules given the parsed \
-            :class:`~datastructs/ModuleNode` tree.
+            :class:`~nbrefactor.datastructs.ModuleNode` tree.
     
     Args:
         notebook_path (str): the full path to the Notebook file.
@@ -36,8 +39,8 @@ def process_notebook(notebook_path, output_path,
             node) and returns the modified content.
     
     Returns:
-        :class:`~datastructs/ModuleNode`: the root node of the generated \
-            tree structure.
+        :class:`~nbrefactor.datastructs.ModuleNode`: the root node of the \
+            generated tree structure.
         
     """
 

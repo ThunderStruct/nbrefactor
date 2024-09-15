@@ -1,35 +1,3 @@
 [build-system]
 requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
-
-
-# Bump My Version configuration
-[tool.bumpversion]
-current_version = "0.1.0"  # current version
-commit = false             # do not auto-commit
-tag = false                # do not auto-create a git tag
-
-[[tool.bumpversion.files]]
-path = "setup.py"
-search = 'version="{current_version}"'
-replace = 'version="{new_version}"'
-
-[[tool.bumpversion.files]]
-path = "README.md"
-search = "pypi%20package-{current_version}-lightgrey"
-replace = "pypi%20package-{new_version}-lightgrey"
-
-[[tool.bumpversion.files]]
-path = "docs/source/conf.py"
-search = 'release = "{current_version}"'
-replace = 'release = "{new_version}"'
-
-[[tool.bumpversion.files]]
-path = "docs/source/conf.py"
-search = 'version = "{current_version}"'
-replace = 'version = "{new_version}"'
-
-[[tool.bumpversion.files]]
-path = "src/nbrefactor/__init__.py"
-search = '__version__ = "{current_version}"'
-replace = '__version__ = "{new_version}"'

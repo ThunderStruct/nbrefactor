@@ -8,14 +8,15 @@ from graphviz import Digraph
 
 def plot_module_tree(root_node, format='pdf', ):
     """
-    Visualize the :class:`~ModuleNode` tree structure and save it as a PDF.
+    Visualize the :class:`~nbrefactor.datastructs.ModuleNode` tree structure \
+        and save it as a PDF.
 
     Primarily used for debugging and ensuring the generated structure is 
     as intended.
     
     Args:
-        root_node (:class:`~ModuleNode`): the root node of the tree to \
-            visualize.
+        root_node (:class:`~nbrefactor.datastructs.ModuleNode`): the root \
+            node of the tree to visualize.
         output_path (str): the file path where the PDF should be saved.
 
     Returns:
@@ -61,8 +62,8 @@ def plot_module_tree(root_node, format='pdf', ):
 #     structure using NetworkX, Graphviz layout, and plt.
 
 #     Args:
-#         root_node (:class:`~ModuleNode`): the root node of the tree to \
-#            visualize.
+#         root_node (:class:`~nbrefactor.datastructs.ModuleNode`): the root \
+#            node of the tree to visualize.
     
 #     Returns:
 #         None: the plot is displayed with matplotlib.

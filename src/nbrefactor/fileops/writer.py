@@ -9,7 +9,7 @@ from ..datastructs import ParsedCodeCell
 def write_modules(node, output_path, pre_write_hook=None):
     """
     Recursively writes the modules and their contents given a \
-        :class:`~ModuleNode` tree hierarchy.
+        :class:`~nbrefactor.datastructs.ModuleNode` tree hierarchy.
     
     Args:
         node (ModuleNode): the current node representing a module or package.

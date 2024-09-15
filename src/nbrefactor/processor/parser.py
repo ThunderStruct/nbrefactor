@@ -15,8 +15,8 @@ def parse_code_cell(cell_idx, source, module_node):
     Args:
         cell_idx (int): index of the cell in the notebook.
         source (str): the cell's index in the notebook.
-        module_node (:class:`~ModuleNode`): the module node in the built \
-            module tree
+        module_node (:class:`~nbrefactor.datastructs.ModuleNode`): the module \
+            node in the built module tree
         
     Returns:
         ParsedCodeCell: a parsed code cell object with analyzed imports, \

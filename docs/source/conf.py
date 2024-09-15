@@ -12,7 +12,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src/nbrefactor'))
+sys.path.insert(0, os.path.abspath('../../src'))
+
+from nbrefactor import __version__ as nbrefactor_version
 
 
 # -- Project information -----------------------------------------------------
@@ -22,8 +24,8 @@ copyright = '2024, Mohamed Shahawy'
 author = 'Mohamed Shahawy'
 
 # The full version, including alpha/beta/rc tags
-version = '0.1.0'
-release = '0.1.0'
+version = nbrefactor_version
+release = nbrefactor_version
 
 
 # -- General configuration ---------------------------------------------------
