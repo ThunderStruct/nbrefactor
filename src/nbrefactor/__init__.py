@@ -1,6 +1,6 @@
 
 # Current
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 # CLI
 from .cli import main
