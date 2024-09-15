@@ -8,7 +8,7 @@ The Python package is hosted on the [Python Package Index (PyPI)](https://pypi.o
 The latest published version of **nbrefactor** can be installed using
 
 ```bash
-pip install nbrefactor
+pip install --update nbrefactor
 ```
 
 ## Manual Installation

@@ -252,42 +252,40 @@ def __remove_ipy_statements(source):
 
 def analyze_code_cell(source, current_module_path):
     """
-    Analyzes dependencies and track declared definitions from a given code 
+    Analyzes dependencies and tracks declared definitions from a given code 
     block.
 
-    There are a few challenges with this, mainly: 
+    There are a few challenges with this, mainly:
+
     - Tracking declarations globally to handle identifier shadowing 
       (and exclude non-exportable identifiers, such as function arguments)
-    - Implementing scope-awareness (this is obviously pretty simple and yet \
-        headache-inducing; 
-      we just add an empty set `{}` for each encountered scope and push in \
-        the respective declarations)
-    - Handling relative import statements sequentially as we encounter new \
-        modules/code blocks
-      (e.g. `class A` declared in a generated `./root/package_a/class_a.py` \
-        could be imported in 
-      a relative `package_b`)
-    - Taking into considedration import aliases (`import pandas as pd`, etc.) 
+    - Implementing scope-awareness (this is obviously pretty simple and yet 
+      headache-inducing; we just add an empty set `{}` for each encountered 
+      scope and push in the respective declarations)
+    - Handling relative import statements sequentially as we encounter new 
+      modules/code blocks (e.g. `class A` declared in a generated 
+      `./root/package_a/class_a.py` could be imported in a relative 
+      `package_b`)
+    - Taking into consideration import aliases (`import pandas as pd`, etc.)
 
-    An existential crisis later (dear god I hope someone gets some use out \
-        of this tool), 
-    I split the code dependency analysis process into 5 steps:
+    One existential crisis later, I split the code dependency analysis 
+    process into 5 steps:
 
-    1- We remove ast-incompatible statements from the given code source 
-       (primarily IPython magic statements)
-    2- Parse the source using ast (this potentially raises an exception, 
+    1. We remove ast-incompatible statements from the given code source 
+       (primarily IPython magic statements).
+    2. Parse the source using ast (this potentially raises an exception, 
        we wrap this function in a try-except on the parser-level, 
-       and simply warn + dump the unparseable code into the respective file)
-    3- Strip all import statements from the source as we will later inject \
-        the ones we need 
-       for this particular module
-    4- Track the import statements' declared definitions globally, \
-        (this will shadow existing 
-       identifiers with the same name -> as it should). This handles both `import $` 
-       and `from $ import $`, supporting `as` aliases)
-    5- Grab the visited usages and collate the required dependencies from \
-        the global definitions,
-       handling relative imports and 3rd party libraries respectively.
+       and simply warn + dump the unparseable code into the respective file).
+    3. Strip all import statements from the source as we will later inject 
+       the ones we need for this particular module.
+    4. Track the import statements' declared definitions globally 
+       (this will shadow existing identifiers with the same name, as it 
+       should). 
+       This handles both `import $` and `from $ import $`, supporting `as` 
+       aliases.
+    5. Grab the visited usages and collate the required dependencies from 
+       the global definitions, handling relative imports and 3rd party 
+       libraries respectively.
 
 
     Args:

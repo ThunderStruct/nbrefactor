@@ -7,7 +7,7 @@
 <div align="center">
 
 <a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a>
-<a href="https://pypi.org/project/nbrefactor/0.1.0/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.5-lightgrey.svg)</a>
+<a href="https://pypi.org/project/nbrefactor/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.1-lightgrey.svg)</a>
 <a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a>
 <a href="https://nbrefactor.readthedocs.io/en/latest/">![Read the Docs](https://readthedocs.org/projects/nbrefactor/badge/?version=latest)</a>
 
@@ -121,15 +121,6 @@ jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 - `<notebook_path>`: Path to the Jupyter notebook file you want to refactor.
 - `<output_path>`: Directory where the refactored Python modules will be saved.
 
-### CLI Arguments
-
-| Argument                 | Type | Description                                                          | Default    |
-| ------------------------ | ---- | -------------------------------------------------------------------- | ---------- |
-| `notebook_path`          | str  | Path to the Jupyter Notebook file to be refactored.                  | (Required) |
-| `output_path`            | str  | Path to the output directory where refactored modules will be saved. | (Required) |
-| `-rp`, `--root-package`  | str  | Name of the root package. Defaults to the current directory `"."`.   | `"."`      |
-| `-gp`, `--generate-plot` | flag | Plots a dendrogram of the refactored project structure.              | `False`    |
-| `-pf`, `--plot-format`   | str  | Format of the generated plot (e.g., `"pdf"`, `"png"`).               | `"pdf"`    |
 
 ## Demo
 

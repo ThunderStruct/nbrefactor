@@ -22,6 +22,7 @@ copyright = '2024, Mohamed Shahawy'
 author = 'Mohamed Shahawy'
 
 # The full version, including alpha/beta/rc tags
+version = '0.1.0'
 release = '0.1.0'
 
 
@@ -55,6 +56,7 @@ extensions = [
 myst_enable_extensions = [
 	'html_admonition'
 ]
+myst_heading_anchors = 3
 
 source_suffix = ['.rst', '.md']
 
