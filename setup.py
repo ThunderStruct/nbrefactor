@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='nbrefactor',
-    version='0.1.0',
+    version='0.1.1',
     author='Mohamed Shahawy',
     author_email='envious-citizen.0s@icloud.com',
     description='An automation tool to refactor Jupyter Notebooks to Python modules, with code dependency analysis.',
