@@ -160,7 +160,7 @@ The [TODO](TODO.md) list delineates some potential future implementations and im
 
 ## PR Submission
 
-In addition to following the [contribution guidelines](CONTRIBUTING.md), please ensure the following steps are adhered to prior to submitting a PR:
+In addition to following the [contribution guidelines](CONTRIBUTING.md), please ensure the steps below are adhered to prior to submitting a PR:
 
 - The [CHANGELOG](CHANGELOG.md) is updated according to the given structure
 - The [README](README.md) and [TODO](TODO.md) are updated (if applicable)
