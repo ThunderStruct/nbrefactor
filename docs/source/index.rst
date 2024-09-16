@@ -16,7 +16,6 @@ nbrefactor
 
    about
    installation
-   usage
    examples
 
 .. toctree::
@@ -24,6 +23,7 @@ nbrefactor
    :caption: Technical Documentation
 
    api
+   usage
    markdown_commands
 
 .. toctree::
