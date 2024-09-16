@@ -16,7 +16,7 @@
 
 - [ ] 🟠 Reimplement the Processor logic to a 2-pass approach to infer the module tree structure and node types, _then_ analyze the usages/dependencies (the CDA bit). This is to overcome the current hacky relative-imports' solution for package-level modules (refer to [./fileops/writer.py:\_\_write_module_node()](https://github.com/ThunderStruct/nbrefactor/blob/63322fe4a33422d2982dedbd3683ee1e2f9bc739/src/nbrefactor/fileops/writer.py#L49) for the full description).
 
-- [ ] 🟢 Handle custom Markdown commands to override the module tree structure.
+- [ ] 🟢 Add and handle custom Markdown commands to override the module tree structure (e.g. assign node IDs, force parent nodes regardless of Markdown structure, node depth (partially implemented in the [processor](https://github.com/ThunderStruct/nbrefactor/blob/b2eb3b501da898c625cb1712c076df8b0ac3896e/src/nbrefactor/processor/processor.py#L287)), etc.).
 
 
 ## Minor
