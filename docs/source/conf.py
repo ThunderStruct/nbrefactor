@@ -87,8 +87,8 @@ html_static_path = ['_static']
 
 html_theme_options = {
     'sidebar_hide_name': True,
-    'light_logo': 'nbrefactor_logo.svg',
-    'dark_logo': 'nbrefactor_logo.svg'
+    'light_logo': 'nbrefactor_logo.png',
+    'dark_logo': 'nbrefactor_logo.png'
 }
 
 html_show_sphinx = False
