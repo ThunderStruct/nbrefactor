@@ -22,9 +22,9 @@ nbrefactor
    :maxdepth: 4
    :caption: Technical Documentation
 
-   api
    usage
    markdown_commands
+   api
 
 .. toctree::
    :maxdepth: 4
