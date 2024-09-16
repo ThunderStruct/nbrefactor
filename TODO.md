@@ -1,16 +1,10 @@
 
-<style>
-r { color: Red }
-o { color: Orange }
-g { color: Green }
-</style>
-
 # Todo
 
 
 ## Major
 
-- [ ] <r>(critical)</r> Fix attribute name definitions conflicting with globally tracked identifiers (refer to `sample_HiveNAS.ipynb` -> `foodsource.py`'s `time` property conflicting with the `time` package, leading to an improper `import time` dependency).
+- [ ] $${\color{red}critical}$$ Fix attribute name definitions conflicting with globally tracked identifiers (refer to `sample_HiveNAS.ipynb` -> `foodsource.py`'s `time` property conflicting with the `time` package, leading to an improper `import time` dependency).
 
 - [ ] Handle custom Markdown commands to override the module tree structure.
 
