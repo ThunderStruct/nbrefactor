@@ -42,7 +42,7 @@ html_favicon = '_static/favicon.png'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-	'nbsphinx',
+	# 'nbsphinx',
 	'sphinx.ext.autodoc',
 	#'sphinx.ext.autosummary',
 	'sphinx.ext.coverage',

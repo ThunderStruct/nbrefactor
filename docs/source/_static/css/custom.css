@@ -1,0 +1,159 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i");
+
+/* 
+div.bottom-of-page div.left-details {
+    visibility: hidden;
+}
+
+div.bottom-of-page div.left-details div.copyright {
+    visibility: visible !important;
+}
+
+div.bottom-of-page div.left-details a,
+div.bottom-of-page div.left-details #text {
+    display: none;
+} */
+
+body:not([data-theme="dark"]) div.highlight {
+    background: #f8f9fb;
+}
+
+body:not([data-theme="dark"]) div.highlight > button {
+    background-color: #fff;
+}
+
+body:not([data-theme="dark"]) div.highlight > button:hover {
+    background-color: #fff;
+    color: var(--color-link);
+}
+
+body:not([data-theme="dark"]) div.highlight > button:active {
+    background-color: #fff;
+    color: var(--color-link);
+}
+
+body:not([data-theme="dark"]) div.highlight > button.success {
+    color: #22863a !important;
+    stroke: #22863a !important;
+}
+
+table.config-table .code.python.literal {
+    color: var(--color-api-name);
+    text-align: center;
+}
+
+table.arguments-cli-table {
+    width: 90%;
+}
+
+table.arguments-cli-table th {
+    font-size: 0.85em;
+}
+
+table.config-table td:first-child,
+table.arguments-cli-table td:first-child {
+    font-size: 0.7em;
+    text-align: center;
+}
+
+table.arguments-cli-table td:nth-child(2),
+table.arguments-cli-table td:nth-child(3) {
+    font-size: 0.9em;
+    color: var(--color-api-name);
+}
+
+table.config-table td:nth-child(2) {
+    text-align: center;
+}
+
+table.config-table td:nth-child(3) {
+    font-size: 0.7em;
+    padding: 0 15px;
+}
+
+code.yaml span.keyword {
+    color: var(--color-api-name);
+}
+
+table.config-table td:nth-child(3) div:nth-last-child(2) {
+    border-bottom: 1px solid var(--color-table-border);
+}
+
+table.config-table td:nth-child(3) .param-default {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.MathJax {
+    font-size: 1.1em !important;
+}
+
+section#installation h2 {
+    font-size: 1.5em;
+}
+
+section#installation h3 {
+    font-size: 1.25em;
+}
+
+section#installation h4 {
+    font-size: 1.15em;
+}
+
+section#installation strong {
+    font-size: 0.9em;
+}
+
+section#contributing h2 {
+    font-size: 1.5em;
+}
+
+section#contributing h3 {
+    font-size: 1.25em;
+}
+
+section#contributing h4 {
+    font-size: 1.15em;
+}
+
+section#contributing strong {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+section#configuration h2 {
+    font-size: 1.25em;
+}
+
+section#license h2 {
+    font-size: 1.5em;
+}
+
+section#license blockquote {
+    font-size: 0.85em;
+}
+
+section#about h2 {
+    font-size: 1.35em;
+}
+
+section#about strong,
+section#usage strong {
+    font-size: 0.95em;
+}
+
+section#usage h2 {
+    font-size: 1.35em;
+}
+
+section#usage h3 {
+    font-size: 1.15em;
+}
+
+section#usage a.reference.internal {
+    font-size: 1.05em;
+}
+
+section#usage code.python span.name.builtin {
+    color: var(--color-api-name);
+}
