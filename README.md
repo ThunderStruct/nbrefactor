@@ -19,15 +19,15 @@ An automation tool to refactor Jupyter Notebooks to Python packages and modules.
 
 ---
 
-# Overview (The "What")
+# Overview
 
 **nbrefactor** is designed to refactor Jupyter Notebooks into structured Python packages and modules. Using Markdown Headers and/or custom commands in a notebook's Markdown/text cells, nbrefactor creates a hierarchical module structure that reflects the notebook's content autonomously.
 
-# Motivation (The "Why")
+## Motivation
 
 With the growing dependence on cloud-based IPython platforms ([Google Colab](https://colab.research.google.com/), primarily), developing projects directly in-browser has become more prominent. Having suffered through the pain of refactoring entire projects from Jupyter Notebooks into Python packages/modules to facilitate PyPI publication (and proper source control), this tool was developed to automate the refactoring process.
 
-# Approach (The "How")
+# Implementation
 
 This project does _not_ just create a hierarchy based on the level of Markdown headers (how many `#` there are); this is just a single step in the refactoring process.
 
@@ -141,7 +141,9 @@ Consult the [CHANGELOG](CHANGELOG.md) for the latest updates.
 
 # Contributing
 
-PRs are welcome (and encouraged)! If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines. 
+All contributions are welcome (and encouraged)! Even incremental PRs that just add minor features or corrections to the docs will be considered :) 
+
+If you'd like to contribute to **nbrefactor**, please read the [CONTRIBUTING](CONTRIBUTING.md) guidelines. 
 
 The [TODO](TODO.md) list delineates some potential future implementations and improvements. 
 
