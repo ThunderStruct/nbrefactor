@@ -162,3 +162,4 @@ In addition to following the [contribution guidelines](CONTRIBUTING.md), please 
 **nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
+
