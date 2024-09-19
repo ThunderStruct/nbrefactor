@@ -22,6 +22,7 @@
 ## Minor
 
 - [ ] 🔴 Add a CLI flag to instantiate modules (add `__init__.py` to sub-directories in the writer phase).
+- [ ] 🟠 Add unit testing for the [CDA](src/nbrefactor/processor/cda.py), [Parser](src/nbrefactor/processor/parser.py), and [CLI](src/nbrefactor/cli.py). Integrate it into the CI workflow.
 
 
 ## Patches
