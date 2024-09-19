@@ -19,13 +19,13 @@ To use a Markdown command, you may include it in an HTML comment (as to not inte
 
 The format is:
 
-.. code-block:: markdown
+.. code-block:: html
 
     <!-- $command-name=value -->
 
 For example, to rename a package:
 
-.. code-block:: markdown
+.. code-block:: html
 
     <!-- $package=my_custom_package -->
 
