@@ -10,6 +10,9 @@
 <a href="https://pypi.org/project/nbrefactor/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.2-lightgrey.svg)</a>
 <a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a>
 <a href="https://nbrefactor.readthedocs.io/en/latest/">![Read the Docs](https://readthedocs.org/projects/nbrefactor/badge/?version=latest)</a>
+<a href="https://github.com/ThunderStruct/nbrefactor/actions/workflows/ci.yaml">![GitHub CI](https://github.com/ThunderStruct/nbrefactor/actions/workflows/ci.yaml/badge.svg)</a>
+
+
 
 </div>
 
