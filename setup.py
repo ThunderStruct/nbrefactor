@@ -45,3 +45,4 @@ setuptools.setup(
         'Source': 'https://github.com/ThunderStruct/nbrefactor',
     }
 )
+

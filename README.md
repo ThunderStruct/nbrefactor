@@ -125,6 +125,24 @@ jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 - `<output_path>`: Directory where the refactored Python modules will be saved.
 
 
+## Markdown Commands
+
+The following table lists the currently implemented Markdown commands and their functions.
+
+| Command                        | Description                                                                                               |
+|---------------------------------|-----------------------------------------------------------------------------------------------------------|
+| `$ignore-package`               | Ignores all modules/packages until a header with a depth less than or equal to the current one is reached. |
+| `$ignore-module`                | Ignores a single module (may consist of multiple code cells).                                              |
+| `$ignore-cell`                  | Ignores the next code cell regardless of type.                                                             |
+| `$ignore-markdown`              | Ignores the current Markdown cell (e.g., when used for instructions only).                                 |
+| `$package=<name>`               | Renames the current package and asserts the node type as 'package'.                                        |
+| `$module=<name>`                | Renames the current module and asserts the node type as 'module'.                                          |
+| `$node=<name>`                  | Renames the current node generically, regardless of type.                                                  |
+| `$declare-package=<name>`       | Declares a new node and asserts its type as 'package'.                                                     |
+| `$declare-module=<name>`        | Declares a new node and asserts its type as 'module'.                                                      |
+| `$declare-node=<name>`          | Declares a new node with no type (type will be inferred).                                                  |
+
+
 ## Demo
 
 There are several example notebooks provided to showcase **nbrefactor**'s capabilities.
@@ -162,4 +180,3 @@ In addition to following the [contribution guidelines](CONTRIBUTING.md), please 
 **nbrefactor** is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ---
-

@@ -34,3 +34,4 @@ The core of **nbrefactor**'s functionality lies in the Code Dependency Analyzer 
 5. **Dependency Analysis**: analyze identifier usages in a given code block.
 6. **Dynamic Relative Import Resolution**: resolve local import statements dynamically depending on the current and target modules' positions in the tree.
 7. **Dependency Generation and Resolution**: generate the respective import statements (given the definitions' analysis in step 5 & 6) to be injected during the file-writing phase.
+
