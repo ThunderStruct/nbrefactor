@@ -25,6 +25,7 @@ class ModuleNode:
                                             # under this node
         self.ignore_next_cell = False       # ignores the next parsed cell 
                                             # (handled intrinsically)
+        self.analyze_only = False           # analyze but don't create a file
 
 
     def add_child(self, child_node):
@@ -46,6 +47,9 @@ class ModuleNode:
         Checks if the node has non-empty code cells (we only write \
             modules/.py files if this is true)
         """
+        # Don't count this node as having code cells if it's analyze_only
+        if self.analyze_only:
+            return False
         return any([True for cell in self.parsed_cells \
                     if isinstance(cell, ParsedCodeCell) \
                         and len(cell.parsed_source.strip())])

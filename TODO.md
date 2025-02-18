@@ -27,6 +27,8 @@
 
 ## Patches
 
+- [x] 🔴 Fixed module declaration within package contexts to properly create modules inside their parent packages rather than as standalone files.
+
 - [ ] 🟠 Add a "before and after" example to the docs
 
 - [ ] 🟢 Restructure the docs' `index.rst` to have a more informative homepage than just the toctree. Also add the version number (already declared in [conf.py](docs/source/conf.py) and accessible through `|version|` in RST).

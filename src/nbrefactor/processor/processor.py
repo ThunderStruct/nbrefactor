@@ -76,8 +76,18 @@ def process_notebook(notebook_path, output_path,
                 # command is present
                 continue
 
+            # Check for analyze-only command before processing headers
+            analyze_only = any([True for e in parsed_md.elements \
+                    if isinstance(e, MarkdownCommand) \
+                        and e.type == MarkdownCommandType.ANALYZE_ONLY])
+
             for md_element in parsed_md.elements:
                 if isinstance(md_element, MarkdownHeader):
+                    # Skip header processing; we're only analyzing the cell
+                    # i.e. do not create a file/folder for it
+                    if analyze_only:
+                        continue
+
                     # handle MarkdownHeader
                     header = md_element
                     header_name = __sanitize_node_name(header.name)
@@ -230,6 +240,10 @@ def __handle_markdown_command(command, current_node, node_stack):
         # this is handled externally to avoid the processing cost
         pass
 
+    elif command.type == MarkdownCommandType.ANALYZE_ONLY:
+        # Mark the current node to be analyzed but not written to a file
+        current_node.analyze_only = True
+
     # NODE-MANIPULATION COMMANDS
     elif command.type == MarkdownCommandType.RENAME_PACKAGE:
         # override the current node's name + assert package type
@@ -260,20 +274,57 @@ def __handle_markdown_command(command, current_node, node_stack):
         # create a new node and assert its node type to module
         node_name = __sanitize_node_name(command.value)
 
-        new_node_parent = current_node
+        # If we're in a package context, the module should be created inside that package
+        if current_node.node_type == 'package':
+            # Create module inside the current package
+            new_node = ModuleNode(node_name, current_node, 
+                              depth=current_node.depth + 1)
+            new_node.node_type = 'module'
+            current_node.add_child(new_node)
+            node_stack.append(new_node)
+        else:
+            # Check if this should be a package structure (contains . or /)
+            if '.' in node_name or '/' in node_name:
+                # Split into package/module parts
+                parts = node_name.replace('/', '.').split('.')
+                module_name = parts[-1]
+                package_parts = parts[:-1]
+                
+                # Start from current node's parent if we're not at root
+                new_node_parent = current_node
+                if current_node.parent is not None:
+                    node_stack.pop()
+                    new_node_parent = current_node.parent
+                
+                # Create package structure
+                for package_part in package_parts:
+                    package_node = ModuleNode(package_part, new_node_parent,
+                                          depth=new_node_parent.depth + 1)
+                    package_node.node_type = 'package'
+                    new_node_parent.add_child(package_node)
+                    new_node_parent = package_node
+                    node_stack.append(package_node)
+                
+                # Create the actual module at the leaf
+                new_node = ModuleNode(module_name, new_node_parent,
+                                  depth=new_node_parent.depth + 1)
+                new_node.node_type = 'module'
+                new_node_parent.add_child(new_node)
+                node_stack.append(new_node)
+            else:
+                new_node_parent = current_node
 
-        # default to sibling-level if we're not at root level
-        if current_node.parent is not None:    
-            node_stack.pop()
-            new_node_parent = current_node.parent
+                # default to sibling-level if we're not at root level
+                if current_node.parent is not None:    
+                    node_stack.pop()
+                    new_node_parent = current_node.parent
 
-        new_node = ModuleNode(node_name, new_node_parent, 
-                              depth=new_node_parent.depth + 1)
-        
-        new_node.node_type = 'module'
-        new_node_parent.add_child(new_node)
-
-        node_stack.append(new_node)
+                new_node = ModuleNode(node_name, new_node_parent, 
+                                  depth=new_node_parent.depth + 1)
+                
+                new_node.node_type = 'module'
+                new_node_parent.add_child(new_node)
+                node_stack.append(new_node)
 
     elif command.type == MarkdownCommandType.DECLARE_NODE:
         # create a new generic node (type will be automatically inferred)

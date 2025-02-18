@@ -46,6 +46,9 @@ The following table lists all the possible Markdown commands and their functions
    ``$ignore-cell``                             Ignores the next code cell regardless of type.
    ``$ignore-markdown``                         Ignores the current Markdown cell (e.g., when used for 
                                                 instructions only).
+   ``$analyze-only``                           Prevents the current markdown cell from creating a module/package
+                                                but still analyzes any following code for dependencies.
+                                                Useful for global imports.
    ``$package=<name>``                          Renames the current package and asserts the node type as 
                                                 'package'.
    ``$module=<name>``                           Renames the current module and asserts the node type as 

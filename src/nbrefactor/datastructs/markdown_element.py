@@ -27,6 +27,9 @@ class MarkdownCommandType(Enum):
     IGNORE_MARKDOWN     = 'ignore-markdown'     # ignores the current Markdown 
                                                 # cell (e.g. when MD is used 
                                                 # for instructions only)
+    ANALYZE_ONLY        = 'analyze-only'        # analyzes the next code cell for
+                                                # dependencies but does not create
+                                                # a file for it
 
     # Node-Manipulation Commands
     RENAME_PACKAGE      = 'package'             # sets the package name 
