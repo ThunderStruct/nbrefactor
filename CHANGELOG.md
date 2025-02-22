@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.4 (2024-02-22)
+## 0.1.6 (2025-02-22)
 
-[Compare the full difference.](https://github.com/ThunderStruct/nbrefactor/compare/0.1.3...0.1.4)
+[Compare the full difference.](https://github.com/ThunderStruct/nbrefactor/compare/0.1.3...0.1.6)
 
 ### Added
 
