@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.4 (2024-02-22)
+
+[Compare the full difference.](https://github.com/ThunderStruct/nbrefactor/compare/0.1.3...0.1.4)
+
+### Added
+
+- Added new CLI flag `-i/--init-files` to optionally generate `__init__.py` files in package directories
+- Improved package imports by properly exposing modules in `__init__.py` files
+
+### Fixed
+
+- Fixed relative import issues by properly handling package hierarchy with `__init__.py` files
+
 ## 0.1.3 (2025-02-18)
 
 [Compare the full difference.](https://github.com/ThunderStruct/nbrefactor/compare/0.1.2...0.1.3)

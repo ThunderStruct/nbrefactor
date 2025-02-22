@@ -17,7 +17,8 @@ def main():
     # refactoring
     root_node = process_notebook(notebook_path=args.notebook_path, 
                                  output_path=args.output_path, 
-                                 root_package=args.root_package)
+                                 root_package=args.root_package,
+                                 generate_init=args.generate_init)
     
     # plotting (if applicable)
     if args.generate_plot:

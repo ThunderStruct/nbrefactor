@@ -13,7 +13,7 @@ from ..datastructs import MarkdownHeader, MarkdownCommand, MarkdownCommandType
 
 
 def process_notebook(notebook_path, output_path, 
-                     root_package='.', pre_write_hook=None):
+                     root_package='.', pre_write_hook=None, generate_init=False):
     """
     The Notebook-refactoring entry point. This function:
 
@@ -37,6 +37,8 @@ def process_notebook(notebook_path, output_path,
                 `output_path`).
         write_hook (callable, optional): a hook function that takes (content, \
             node) and returns the modified content.
+        generate_init (bool, optional): whether to generate __init__.py files \
+            in package directories. Defaults to False.
     
     Returns:
         :class:`~nbrefactor.datastructs.ModuleNode`: the root node of the \
@@ -165,7 +167,8 @@ def process_notebook(notebook_path, output_path,
         return content
 
     write_modules(root, output_path, 
-                  pre_write_hook=write_hook_wrapper)
+                  pre_write_hook=write_hook_wrapper,
+                  generate_init=generate_init)
     
     Logger.log((
             f'Successfully wrote ({file_counter}) files to "{output_path}"!\n'

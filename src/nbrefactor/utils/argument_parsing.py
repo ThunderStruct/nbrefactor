@@ -21,6 +21,8 @@ def parse_args():
             Defaults to `False`.
         -pf, --plot-format (str): format of the plot (e.g., "pdf", "png"). \
             Defaults to "pdf".
+        -i, --init-files: generate __init__.py files in package directories. \
+            Defaults to `False`.
     
     Returns:
         argparse.Namespace: parsed arguments from the command line.
@@ -64,5 +66,10 @@ def parse_args():
                         dest='plot_format',
                         help=('Format of the plot (e.g., "pdf", "png"). '
                               'Defaults to "pdf".'))
+
+    parser.add_argument('-i', '--init-files',
+                        action='store_true',
+                        dest='generate_init',
+                        help='Generate __init__.py files in package directories.')
 
     return parser.parse_args()
