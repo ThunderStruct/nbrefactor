@@ -26,7 +26,9 @@
 
 ## Patches
 
-- [x] 🔴 Fixed module declaration within package contexts to properly create modules inside their parent packages rather than as standalone files.
+- [x] 🔴 Fix module declaration within package contexts to properly create modules inside their parent packages rather than as standalone files.
+
+- [ ] 🔴 Fix cases where `from ... import ...` with `as` aliases are not properly parsed (basic example of which is `from matplotlib import pyplot as plt`; this only sometimes fails).
 
 - [ ] 🟠 Add a "before and after" example to the docs
 
