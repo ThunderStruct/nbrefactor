@@ -109,6 +109,11 @@ Or use one of the scripts below:
 
 Refer to the [documentation](https://nbrefactor.readthedocs.io/en/latest/) for the comprehensive commands' reference. Some basic usages are provided below.
 
+Sample basic usage:
+```bash
+jupyter nbrefactor notebook.ipynb output_dir/
+```
+
 ## Command Line Interface
 
 `nbrefactor` provides a CLI to easily refactor notebooks into a structured project hierarchy.
@@ -121,6 +126,13 @@ To use the CLI, run the following command:
 jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 ```
 
+| Options | Description                                        |
+|---------|----------------------------------------------------|
+| -i      | Generate __init__.py files in package directories. |
+| -rp     | Name of the root package (defaults to ".")         |
+| -gp     | Generate a plot of the module dependency tree      |
+| -pf     | Format of the plot (e.g., "pdf", "png")            |
+
 - `<notebook_path>`: Path to the Jupyter notebook file you want to refactor.
 - `<output_path>`: Directory where the refactored Python modules will be saved.
 
@@ -129,8 +141,8 @@ jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 
 The following table lists the currently implemented Markdown commands and their functions.
 
-| Command                        | Description                                                                                               |
-|---------------------------------|-----------------------------------------------------------------------------------------------------------|
+| Command                         | Description                                                                                                |
+|---------------------------------|------------------------------------------------------------------------------------------------------------|
 | `$ignore-package`               | Ignores all modules/packages until a header with a depth less than or equal to the current one is reached. |
 | `$ignore-module`                | Ignores a single module (may consist of multiple code cells).                                              |
 | `$ignore-cell`                  | Ignores the next code cell regardless of type.                                                             |

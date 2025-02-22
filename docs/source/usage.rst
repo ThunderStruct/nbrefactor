@@ -39,6 +39,7 @@ CLI Arguments
    ``-rp``, ``--root-package``              `str`                                       ``"."``
    ``-gp``, ``--generate-plot``             `flag`                                      ``False``
    ``-pf``, ``--plot-format``               `str`                                       ``"pdf"``
+   ``-i``, ``--init-files``                 `flag`                                      ``False``
    ==================================  ==========================================  ===============
 
 Example Usages
@@ -67,3 +68,11 @@ Example Usages
    .. code-block:: bash
 
       jupyter nbrefactor notebook.ipynb output_dir --generate-plot --plot-format png
+
+5. **Generate __init__.py Files**: Refactor and generate __init__.py files in package directories:
+
+   .. code-block:: bash
+
+      jupyter nbrefactor notebook.ipynb output_dir --init-files
+
+   This is particularly useful when your refactored code uses relative imports between modules. The generated __init__.py files properly expose the modules, making Python's import system work correctly.
