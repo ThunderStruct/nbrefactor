@@ -6,7 +6,7 @@
 
 <div align="center">
 
-<a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7-green)</a>
+<a href="https://github.com/ThunderStruct/nbrefactor">![Platform](https://img.shields.io/badge/python-v3.7+-green)</a>
 <a href="https://pypi.org/project/nbrefactor/">![pypi](https://img.shields.io/badge/pypi%20package-0.1.6-lightgrey.svg)</a>
 <a href="https://github.com/ThunderStruct/nbrefactor/blob/master/LICENSE">![License](https://img.shields.io/badge/license-MIT-orange)</a>
 <a href="https://nbrefactor.readthedocs.io/en/latest/">![Read the Docs](https://readthedocs.org/projects/nbrefactor/badge/?version=latest)</a>
@@ -126,12 +126,12 @@ To use the CLI, run the following command:
 jupyter nbrefactor <notebook_path> <output_path> [OPTIONS]
 ```
 
-| Options | Description                                        |
-|---------|----------------------------------------------------|
-| -i      | Generate __init__.py files in package directories. |
-| -rp     | Name of the root package (defaults to ".")         |
-| -gp     | Generate a plot of the module dependency tree      |
-| -pf     | Format of the plot (e.g., "pdf", "png")            |
+| Options | Description                                          |
+|---------|------------------------------------------------------|
+| -i      | Generate `__init__.py` files in package directories. |
+| -rp     | Name of the root package (defaults to ".")           |
+| -gp     | Generate a plot of the module dependency tree        |
+| -pf     | Format of the plot (e.g., "pdf", "png")              |
 
 - `<notebook_path>`: Path to the Jupyter notebook file you want to refactor.
 - `<output_path>`: Directory where the refactored Python modules will be saved.
